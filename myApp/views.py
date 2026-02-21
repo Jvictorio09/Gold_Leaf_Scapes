@@ -1,4 +1,10 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 
 def home(request):
-    return HttpResponse("Hello, world! This is myApp inside myProject 🚀")
+    return render(request, 'index.html')
+
+def services(request):
+    return render(request, 'services.html')
+
+def service_detail(request):
+    return render(request, 'service_detail.html')

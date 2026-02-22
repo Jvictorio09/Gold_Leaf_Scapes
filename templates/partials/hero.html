@@ -1,5 +1,6 @@
 <!-- ═══════════════ HERO ═══════════════ -->
-<section id="hero">
+{% load static %}
+<section id="hero" {% if hero.background_image_url %}style="background-image: url('{{ hero.background_image_url }}'); background-size: cover; background-position: center;"{% endif %}>
   <div class="hero-bg">
     <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" style="opacity:0.12">
       <defs>
@@ -20,35 +21,41 @@
   </div>
 
   <div class="hero-content">
+    {% if hero.eyebrow %}
     <div class="hero-eyebrow">
       <span class="gold-line"></span>
-      <span>Dubai's Premier Outdoor & Interior Studio</span>
+      <span>{{ hero.eyebrow }}</span>
     </div>
+    {% endif %}
     <h1 class="hero-title">
-      Where Nature Meets<br><em>Refined</em> Living
+      {{ hero.title|safe }}
     </h1>
+    {% if hero.subtitle %}
     <p class="hero-sub">
-      Gold Leaf Scapes crafts extraordinary outdoor landscapes and bespoke interiors for Dubai's most distinguished residences and commercial spaces.
+      {{ hero.subtitle }}
     </p>
+    {% endif %}
+    {% if hero.cta_text or hero.secondary_cta_text %}
     <div class="hero-ctas">
-      <a href="#portfolio" class="btn-primary">View Our Work</a>
-      <a href="#cta" class="btn-ghost">Request Consultation</a>
+      {% if hero.cta_text %}
+      <a href="{{ hero.cta_link|default:'#' }}" class="btn-primary">{{ hero.cta_text }}</a>
+      {% endif %}
+      {% if hero.secondary_cta_text %}
+      <a href="{{ hero.secondary_cta_link|default:'#' }}" class="btn-ghost">{{ hero.secondary_cta_text }}</a>
+      {% endif %}
     </div>
+    {% endif %}
   </div>
 
+  {% if hero.get_stats %}
   <div class="hero-stats">
+    {% for stat in hero.get_stats %}
     <div class="stat-item">
-      <div class="stat-num">12+</div>
-      <div class="stat-label">Years in Dubai</div>
+      <div class="stat-num">{{ stat.number }}</div>
+      <div class="stat-label">{{ stat.label }}</div>
     </div>
-    <div class="stat-item">
-      <div class="stat-num">340+</div>
-      <div class="stat-label">Projects Completed</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">98%</div>
-      <div class="stat-label">Client Satisfaction</div>
-    </div>
+    {% endfor %}
   </div>
+  {% endif %}
 </section>
 

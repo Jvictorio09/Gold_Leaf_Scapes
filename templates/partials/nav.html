@@ -1,12 +1,13 @@
 {% load static %}
 <!-- ═══════════════ NAV ═══════════════ -->
 <nav id="nav">
-  <div class="logo-text">Gold Leaf <span>Scapes</span></div>
+  <a href="{% url 'home' %}" class="logo-image">
+    <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771750229/GLS_2_rs4xu1.png" alt="Gold Leaf Scapes" loading="eager">
+  </a>
   <div class="nav-links">
-    <a href="#intro">About</a>
+    <a href="{% url 'home' %}#intro">About</a>
     <a href="{% url 'services' %}">Services</a>
-    <a href="#portfolio">Projects</a>
-    <a href="#process">Process</a>
+    <a href="{% url 'projects' %}">Projects</a>
     <a href="#cta" class="btn-nav">Get a Quote</a>
   </div>
 </nav>

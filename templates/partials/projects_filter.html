@@ -1,0 +1,10 @@
+<!-- ════ FILTER BAR ════ -->
+{% if categories %}
+<div class="projects-filter-bar" id="projectsFilterBar">
+  <button class="filter-btn active" onclick="filterProjects('all', this)">All <span class="filter-count">{{ projects|length }}</span></button>
+  {% for category in categories|slice:":5" %}
+  <button class="filter-btn" onclick="filterProjects('{{ category|slugify }}', this)">{{ category }}</button>
+  {% endfor %}
+</div>
+{% endif %}
+

@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ project.title }} – Gold Leaf Scapes Dubai{% endblock %}
+
+{% block content %}
+<!-- ════ PROJECT HERO ════ -->
+<div class="project-hero">
+  {% if project.hero_image_url %}
+  <div class="project-hero-bg" style="background-image: url('{{ project.hero_image_url }}');"></div>
+  {% else %}
+  <div class="project-hero-bg" style="background: linear-gradient(135deg, #1c2e14 0%, #2f4a22 50%, #1a2710 100%);"></div>
+  {% endif %}
+  <div class="project-hero-overlay"></div>
+  
+  <div class="project-hero-content">
+    <div>
+      <div class="breadcrumb">
+        <a href="{% url 'home' %}">Home</a>
+        <i class="fas fa-chevron-right"></i>
+        <a href="{% url 'home' %}#portfolio">Portfolio</a>
+        <i class="fas fa-chevron-right"></i>
+        <span style="color:var(--gold)">{{ project.title }}</span>
+      </div>
+      <div class="project-hero-tag">
+        <span class="gold-line" style="width:36px;"></span>
+        <i class="fas fa-map-marker-alt" style="font-size:0.78rem;"></i> {{ project.location }}
+      </div>
+      <h1 class="project-hero-title">{{ project.title }}</h1>
+      {% if project.category %}
+      <div class="project-hero-category">
+        <i class="fas fa-tag"></i> {{ project.category }}
+      </div>
+      {% endif %}
+    </div>
+    <div class="project-hero-side">
+      {% if project.related_service %}
+      <a href="{{ project.related_service.get_absolute_url }}" class="btn-primary">
+        <i class="fas fa-info-circle" style="margin-right:8px;"></i> View Service
+      </a>
+      {% endif %}
+      <a href="{% url 'home' %}#portfolio" class="hero-back">
+        <i class="fas fa-arrow-left"></i> Back to Portfolio
+      </a>
+    </div>
+  </div>
+  
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</div>
+
+<!-- ════ PROJECT OVERVIEW ════ -->
+{% if project.full_description %}
+<section class="project-overview">
+  <div class="project-overview-text reveal">
+    <div class="eyebrow"><span class="gold-line" style="width:48px;"></span> Project Overview</div>
+    <h2 class="section-title">The <em>Story</em></h2>
+    <div class="project-overview-body" style="margin-top:36px;">
+      {{ project.full_description|linebreaks|safe }}
+    </div>
+  </div>
+  
+  {% if project.get_specs %}
+  <div class="project-overview-sidebar reveal reveal-d1">
+    <div>
+      <div class="sb-title text-black"><span class="gold-line" style="width:22px;"></span> Project Details</div>
+      <div class="project-specs-list">
+        {% for spec in project.get_specs %}
+        <div class="project-spec-item">
+          <div class="spec-key">{{ spec.key }}</div>
+          <div class="spec-value">{{ spec.value }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</section>
+{% endif %}
+
+<!-- ════ PROJECT GALLERY ════ -->
+{% if project.get_gallery_list %}
+<section class="project-gallery">
+  <div class="reveal">
+    <div class="eyebrow"><span class="gold-line" style="width:48px;"></span> Project Gallery</div>
+    <h2 class="section-title">Visual <em>Journey</em></h2>
+  </div>
+  <div class="gallery-grid reveal">
+    {% for image_url in project.get_gallery_list %}
+    <div class="gallery-item">
+      <img src="{{ image_url }}" alt="{{ project.title }} - Image {{ forloop.counter }}" loading="lazy">
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- ════ RELATED PROJECTS ════ -->
+{% if related_projects %}
+<section class="related-projects">
+  <div class="reveal">
+    <div class="eyebrow"><span class="gold-line" style="width:48px;"></span> More Projects</div>
+    <h2 class="section-title">Explore <em>More</em></h2>
+  </div>
+  <div class="related-projects-grid reveal">
+    {% for related in related_projects %}
+    <a href="{{ related.get_absolute_url }}" class="related-project-card">
+      {% if related.hero_image_url %}
+      <div class="related-project-bg" style="background-image: url('{{ related.hero_image_url }}');"></div>
+      {% else %}
+      <div class="related-project-bg" style="background: linear-gradient(135deg, #1c2e14 0%, #2f4a22 50%, #1a2710 100%);"></div>
+      {% endif %}
+      <div class="related-project-overlay">
+        <div class="related-project-tag">{{ related.location }}</div>
+        <div class="related-project-name">{{ related.title }}</div>
+        <div class="related-project-category">{{ related.category }}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+

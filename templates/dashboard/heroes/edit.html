@@ -1,0 +1,131 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Edit Hero - Dashboard{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Edit Hero</h1>
+    <a href="{% url 'dashboard_heroes_list' %}" class="text-green-600 hover:underline mt-2 inline-block">
+        <i class="fas fa-arrow-left mr-2"></i>Back to Heroes
+    </a>
+</div>
+
+<div class="bg-white rounded-lg shadow p-6">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-4">
+            <label for="page" class="block text-gray-700 text-sm font-bold mb-2">Page *</label>
+            <select name="page" id="page" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="home" {% if hero.page == 'home' %}selected{% endif %}>Home</option>
+                <option value="services" {% if hero.page == 'services' %}selected{% endif %}>Services</option>
+                <option value="about" {% if hero.page == 'about' %}selected{% endif %}>About</option>
+                <option value="contact" {% if hero.page == 'contact' %}selected{% endif %}>Contact</option>
+                <option value="custom" {% if hero.page == 'custom' %}selected{% endif %}>Custom</option>
+            </select>
+        </div>
+        
+        <div class="mb-4" id="custom_slug_field" style="display: {% if hero.page == 'custom' %}block{% else %}none{% endif %};">
+            <label for="custom_slug" class="block text-gray-700 text-sm font-bold mb-2">Custom Slug</label>
+            <input type="text" name="custom_slug" id="custom_slug" value="{{ hero.custom_slug }}"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        
+        <div class="mb-4">
+            <label for="eyebrow" class="block text-gray-700 text-sm font-bold mb-2">Eyebrow Text</label>
+            <input type="text" name="eyebrow" id="eyebrow" value="{{ hero.eyebrow }}"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="e.g., Dubai's Premier Outdoor & Interior Studio">
+            <p class="text-xs text-gray-500 mt-1">Small text that appears above the title</p>
+        </div>
+        
+        <div class="mb-4">
+            <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title *</label>
+            <input type="text" name="title" id="title" value="{{ hero.title }}" required
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="You can use HTML like &lt;br&gt; and &lt;em&gt; tags">
+            <p class="text-xs text-gray-500 mt-1">HTML allowed (e.g., Where Nature Meets&lt;br&gt;&lt;em&gt;Refined&lt;/em&gt; Living)</p>
+        </div>
+        
+        <div class="mb-4">
+            <label for="subtitle" class="block text-gray-700 text-sm font-bold mb-2">Subtitle</label>
+            <textarea name="subtitle" id="subtitle" rows="3"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{{ hero.subtitle }}</textarea>
+        </div>
+        
+        <div class="mb-4">
+            <label for="background_image_url" class="block text-gray-700 text-sm font-bold mb-2">Background Image URL (Cloudinary)</label>
+            <input type="url" name="background_image_url" id="background_image_url" value="{{ hero.background_image_url }}"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="https://res.cloudinary.com/...">
+            <p class="text-xs text-gray-500 mt-1">Upload images via Gallery and paste the URL here</p>
+        </div>
+        
+        <div class="mb-4">
+            <label for="cta_text" class="block text-gray-700 text-sm font-bold mb-2">Primary CTA Button Text</label>
+            <input type="text" name="cta_text" id="cta_text" value="{{ hero.cta_text }}"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        
+        <div class="mb-4">
+            <label for="cta_link" class="block text-gray-700 text-sm font-bold mb-2">Primary CTA Button Link</label>
+            <input type="text" name="cta_link" id="cta_link" value="{{ hero.cta_link }}"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="#portfolio or /services/">
+        </div>
+        
+        <div class="mb-4">
+            <label for="secondary_cta_text" class="block text-gray-700 text-sm font-bold mb-2">Secondary CTA Button Text</label>
+            <input type="text" name="secondary_cta_text" id="secondary_cta_text" value="{{ hero.secondary_cta_text }}"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        
+        <div class="mb-4">
+            <label for="secondary_cta_link" class="block text-gray-700 text-sm font-bold mb-2">Secondary CTA Button Link</label>
+            <input type="text" name="secondary_cta_link" id="secondary_cta_link" value="{{ hero.secondary_cta_link }}"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="#cta or /contact/">
+        </div>
+        
+        <div class="mb-4">
+            <label for="stats_data" class="block text-gray-700 text-sm font-bold mb-2">Stats Data</label>
+            <input type="text" name="stats_data" id="stats_data" value="{{ hero.stats_data }}"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="3+|Years in Dubai,340+|Projects Completed,98%|Client Satisfaction">
+            <p class="text-xs text-gray-500 mt-1">Format: number|label,number|label,number|label (comma-separated)</p>
+        </div>
+        
+        <div class="mb-4 flex items-center">
+            <input type="checkbox" name="active" id="active" {% if hero.active %}checked{% endif %} class="mr-2">
+            <label for="active" class="text-gray-700 text-sm font-bold">Active</label>
+        </div>
+        
+        <div class="mb-4">
+            <label for="order" class="block text-gray-700 text-sm font-bold mb-2">Display Order</label>
+            <input type="number" name="order" id="order" value="{{ hero.order }}"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        
+        <div class="flex gap-4">
+            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                <i class="fas fa-save mr-2"></i>Save Changes
+            </button>
+            <a href="{% url 'dashboard_heroes_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('page').addEventListener('change', function() {
+        const customSlugField = document.getElementById('custom_slug_field');
+        if (this.value === 'custom') {
+            customSlugField.style.display = 'block';
+        } else {
+            customSlugField.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}
+

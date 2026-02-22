@@ -101,18 +101,30 @@
         <i class="fas fa-chevron-right"></i>
         <a href="{% url 'services' %}">Services</a>
         <i class="fas fa-chevron-right"></i>
-        <span style="color:var(--gold)">Villa Landscaping</span>
+        <span style="color:var(--gold)">{{ service.title }}</span>
       </div>
-      <div class="hero-tag"><span class="gold-line" style="width:36px;"></span><i class="fas fa-tree" style="font-size:0.78rem;"></i> Outdoor Landscaping</div>
-      <h1 class="hero-title">Villa &<br><em>Residential</em><br>Landscaping</h1>
+      {% if service.hero_tag %}
+      <div class="hero-tag"><span class="gold-line" style="width:36px;"></span>{% if service.icon %}<i class="fas {{ service.icon }}" style="font-size:0.78rem;"></i>{% endif %} {{ service.hero_tag }}</div>
+      {% endif %}
+      <h1 class="hero-title">{{ service.title|safe }}</h1>
+      {% if service.hero_meta_projects or service.hero_meta_satisfaction or service.hero_meta_guarantee %}
       <div class="hero-meta">
-        <div><div class="hm-label">Projects Completed</div><div class="hm-val">140+</div></div>
-        <div><div class="hm-label">Avg. Satisfaction</div><div class="hm-val">4.9 ★</div></div>
-        <div><div class="hm-label">Guarantee</div><div class="hm-val">2 Yrs</div></div>
+        {% if service.hero_meta_projects %}
+        <div><div class="hm-label">Projects Completed</div><div class="hm-val">{{ service.hero_meta_projects }}</div></div>
+        {% endif %}
+        {% if service.hero_meta_satisfaction %}
+        <div><div class="hm-label">Avg. Satisfaction</div><div class="hm-val">{{ service.hero_meta_satisfaction }}</div></div>
+        {% endif %}
+        {% if service.hero_meta_guarantee %}
+        <div><div class="hm-label">Guarantee</div><div class="hm-val">{{ service.hero_meta_guarantee }}</div></div>
+        {% endif %}
       </div>
+      {% endif %}
     </div>
     <div class="hero-side">
-      <a href="#" class="btn-primary"><i class="fas fa-calendar-alt" style="margin-right:8px;"></i> Get Free Quote</a>
+      {% if service.cta_text %}
+      <a href="{{ service.cta_link|default:'#' }}" class="btn-primary"><i class="fas fa-calendar-alt" style="margin-right:8px;"></i> {{ service.cta_text }}</a>
+      {% endif %}
       <a href="{% url 'services' %}" class="hero-back"><i class="fas fa-arrow-left"></i> All Services</a>
     </div>
   </div>
@@ -122,4 +134,3 @@
     <span>Scroll</span>
   </div>
 </div>
-

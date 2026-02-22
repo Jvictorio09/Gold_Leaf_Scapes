@@ -1,12 +1,15 @@
 <!-- ════ SHOWCASE ════ -->
+{% if service.get_showcase_projects %}
 <section class="showcase">
   <div class="reveal">
     <div class="eyebrow"><span class="gold-line" style="width:48px;"></span> Featured Projects</div>
     <h2 class="section-title">Villa <em>Portfolio</em></h2>
   </div>
   <div class="showcase-grid reveal">
-    <div class="sc-item large">
-      <div class="sc-bg bg1">
+    {% for project in service.get_showcase_projects %}
+    <div class="sc-item {{ project.size }}">
+      <div class="sc-bg bg{{ forloop.counter }}">
+        <!-- SVG backgrounds are preserved from original design -->
         <svg width="100%" height="100%" viewBox="0 0 800 460" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;opacity:0.6;">
           <ellipse cx="650" cy="130" rx="160" ry="210" fill="rgba(72,104,48,0.6)"/>
           <ellipse cx="615" cy="75" rx="110" ry="155" fill="rgba(96,132,68,0.55)"/>
@@ -19,63 +22,9 @@
           <circle cx="340" cy="348" r="8" fill="rgba(220,170,60,0.5)"/>
         </svg>
       </div>
-      <div class="sc-overlay"><div class="sc-tag">Dubai Hills Estate</div><div class="sc-name">The Palm Residence Garden</div></div>
+      <div class="sc-overlay"><div class="sc-tag">{{ project.tag }}</div><div class="sc-name">{{ project.name }}</div></div>
     </div>
-    <div class="sc-item small">
-      <div class="sc-bg bg2">
-        <svg width="100%" height="100%" viewBox="0 0 560 460" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;opacity:0.55;">
-          <rect x="40" y="180" width="480" height="200" rx="8" fill="rgba(80,150,210,0.4)"/>
-          <rect x="40" y="180" width="480" height="18" rx="4" fill="rgba(180,220,240,0.5)"/>
-          <path d="M40 205 Q160 195 280 208 Q400 221 520 200" stroke="rgba(200,240,255,0.55)" stroke-width="2" fill="none"/>
-          <ellipse cx="100" cy="170" rx="88" ry="120" fill="rgba(72,104,48,0.5)"/>
-          <ellipse cx="465" cy="158" rx="75" ry="105" fill="rgba(80,112,55,0.45)"/>
-          <circle cx="280" cy="230" r="50" fill="rgba(160,220,240,0.15)"/>
-        </svg>
-      </div>
-      <div class="sc-overlay"><div class="sc-tag">Arabian Ranches 2</div><div class="sc-name">Infinity Pool Terrace</div></div>
-    </div>
-    <div class="sc-item half">
-      <div class="sc-bg bg3">
-        <svg width="100%" height="100%" viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;opacity:0.55;">
-          <rect x="60" y="105" width="600" height="10" rx="3" fill="rgba(160,120,70,0.55)"/>
-          <rect x="60" y="105" width="8" height="175" fill="rgba(140,100,55,0.5)"/>
-          <rect x="652" y="105" width="8" height="175" fill="rgba(140,100,55,0.5)"/>
-          <g fill="rgba(160,120,65,0.4)">
-            <rect x="60" y="72" width="7" height="42" rx="2"/><rect x="94" y="65" width="7" height="49" rx="2"/>
-            <rect x="128" y="72" width="7" height="42" rx="2"/><rect x="162" y="63" width="7" height="51" rx="2"/>
-            <rect x="196" y="72" width="7" height="42" rx="2"/><rect x="230" y="67" width="7" height="47" rx="2"/>
-            <rect x="264" y="72" width="7" height="42" rx="2"/><rect x="298" y="64" width="7" height="50" rx="2"/>
-            <rect x="332" y="72" width="7" height="42" rx="2"/><rect x="366" y="68" width="7" height="46" rx="2"/>
-            <rect x="400" y="72" width="7" height="42" rx="2"/><rect x="434" y="65" width="7" height="49" rx="2"/>
-            <rect x="468" y="72" width="7" height="42" rx="2"/><rect x="502" y="63" width="7" height="51" rx="2"/>
-            <rect x="536" y="72" width="7" height="42" rx="2"/><rect x="570" y="67" width="7" height="47" rx="2"/>
-            <rect x="604" y="72" width="7" height="42" rx="2"/><rect x="638" y="64" width="7" height="50" rx="2"/>
-          </g>
-          <path d="M68 105 Q140 78 200 95 Q270 72 340 88 Q410 68 480 82 Q540 65 652 80" stroke="rgba(92,110,74,0.5)" stroke-width="2.5" fill="none"/>
-          <rect x="0" y="265" width="720" height="55" fill="rgba(100,136,72,0.3)"/>
-          <g fill="rgba(200,185,150,0.4)"><rect x="80" y="270" width="80" height="38" rx="2"/><rect x="175" y="270" width="80" height="38" rx="2"/><rect x="270" y="270" width="80" height="38" rx="2"/><rect x="365" y="270" width="80" height="38" rx="2"/><rect x="460" y="270" width="80" height="38" rx="2"/><rect x="555" y="270" width="80" height="38" rx="2"/></g>
-        </svg>
-      </div>
-      <div class="sc-overlay"><div class="sc-tag">Palm Jumeirah</div><div class="sc-name">Shaded Pergola Terrace</div></div>
-    </div>
-    <div class="sc-item half">
-      <div class="sc-bg bg4">
-        <svg width="100%" height="100%" viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;opacity:0.55;">
-          <rect x="0" y="215" width="720" height="105" fill="rgba(88,120,60,0.4)"/>
-          <rect x="80" y="192" width="250" height="58" rx="14" fill="rgba(100,136,72,0.5)"/>
-          <rect x="365" y="185" width="210" height="65" rx="12" fill="rgba(88,120,60,0.48)"/>
-          <ellipse cx="178" cy="192" rx="30" ry="8" fill="rgba(160,200,120,0.3)"/>
-          <ellipse cx="448" cy="186" rx="28" ry="7" fill="rgba(160,200,120,0.28)"/>
-          <!-- Path lights — daytime -->
-          <circle cx="250" cy="242" r="5" fill="rgba(220,180,60,0.6)"/>
-          <circle cx="380" cy="248" r="5" fill="rgba(220,180,60,0.55)"/>
-          <circle cx="505" cy="240" r="5" fill="rgba(220,180,60,0.55)"/>
-          <ellipse cx="250" cy="255" rx="20" ry="6" fill="rgba(220,180,60,0.12)"/>
-          <ellipse cx="380" cy="260" rx="20" ry="6" fill="rgba(220,180,60,0.1)"/>
-        </svg>
-      </div>
-      <div class="sc-overlay"><div class="sc-tag">Jumeirah Golf Estates</div><div class="sc-name">Formal Garden with Pool</div></div>
-    </div>
+    {% endfor %}
   </div>
 </section>
-
+{% endif %}

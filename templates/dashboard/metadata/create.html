@@ -1,0 +1,86 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Create Metadata - Dashboard{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Create New SEO Metadata</h1>
+    <a href="{% url 'dashboard_metadata_list' %}" class="text-purple-600 hover:underline mt-2 inline-block">
+        <i class="fas fa-arrow-left mr-2"></i>Back to Metadata
+    </a>
+</div>
+
+<div class="bg-white rounded-lg shadow p-6">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-4">
+            <label for="page" class="block text-gray-700 text-sm font-bold mb-2">Page *</label>
+            <select name="page" id="page" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="home">Home</option>
+                <option value="services">Services</option>
+                <option value="about">About</option>
+                <option value="contact">Contact</option>
+                <option value="blog">Blog</option>
+                <option value="custom">Custom</option>
+            </select>
+        </div>
+        
+        <div class="mb-4" id="custom_slug_field" style="display: none;">
+            <label for="custom_slug" class="block text-gray-700 text-sm font-bold mb-2">Custom Slug</label>
+            <input type="text" name="custom_slug" id="custom_slug"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        
+        <div class="mb-4">
+            <label for="title" class="block text-gray-700 text-sm font-bold mb-2">SEO Title (Meta Title) *</label>
+            <input type="text" name="title" id="title" required
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <p class="text-xs text-gray-500 mt-1">Recommended: 50-60 characters</p>
+        </div>
+        
+        <div class="mb-4">
+            <label for="description" class="block text-gray-700 text-sm font-bold mb-2">SEO Description (Meta Description)</label>
+            <textarea name="description" id="description" rows="3"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+            <p class="text-xs text-gray-500 mt-1">Recommended: 150-160 characters</p>
+        </div>
+        
+        <div class="mb-4">
+            <label for="keywords" class="block text-gray-700 text-sm font-bold mb-2">Keywords (Comma-separated)</label>
+            <input type="text" name="keywords" id="keywords"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="landscaping, dubai, garden design">
+        </div>
+        
+        <div class="mb-4">
+            <label for="og_image_url" class="block text-gray-700 text-sm font-bold mb-2">Open Graph Image URL (Cloudinary)</label>
+            <input type="url" name="og_image_url" id="og_image_url"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="https://res.cloudinary.com/...">
+            <p class="text-xs text-gray-500 mt-1">Upload images via Gallery and paste the URL here. Recommended: 1200x630px</p>
+        </div>
+        
+        <div class="flex gap-4">
+            <button type="submit" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
+                <i class="fas fa-save mr-2"></i>Create Metadata
+            </button>
+            <a href="{% url 'dashboard_metadata_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('page').addEventListener('change', function() {
+        const customSlugField = document.getElementById('custom_slug_field');
+        if (this.value === 'custom') {
+            customSlugField.style.display = 'block';
+        } else {
+            customSlugField.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}
+

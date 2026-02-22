@@ -1,0 +1,47 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Edit User - Dashboard{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Edit User Role</h1>
+    <a href="{% url 'dashboard_users_list' %}" class="text-blue-600 hover:underline mt-2 inline-block">
+        <i class="fas fa-arrow-left mr-2"></i>Back to Users
+    </a>
+</div>
+
+<div class="bg-white rounded-lg shadow p-6">
+    <div class="mb-6">
+        <h2 class="text-xl font-bold text-gray-800">{{ user.username }}</h2>
+        <p class="text-gray-600">{{ user.email|default:"No email" }}</p>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-4">
+            <label for="role" class="block text-gray-700 text-sm font-bold mb-2">Role *</label>
+            <select name="role" id="role" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="user" {% if profile.role == 'user' %}selected{% endif %}>Regular User</option>
+                <option value="blog_author" {% if profile.role == 'blog_author' %}selected{% endif %}>Blog Author</option>
+                <option value="admin" {% if profile.role == 'admin' %}selected{% endif %}>Admin</option>
+            </select>
+            <p class="text-xs text-gray-500 mt-1">
+                <strong>Admin:</strong> Full access to all dashboard features<br>
+                <strong>Blog Author:</strong> Can create and manage insights/blog posts<br>
+                <strong>Regular User:</strong> Limited access
+            </p>
+        </div>
+        
+        <div class="flex gap-4">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                <i class="fas fa-save mr-2"></i>Save Changes
+            </button>
+            <a href="{% url 'dashboard_users_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

@@ -1,4 +1,5 @@
 <!-- ════ SPECS / FAQ ════ -->
+{% if service.get_specs or service.get_faqs %}
  <style>
   /* ─── SPECS / FAQ ─── */
 .specs-section{
@@ -221,6 +222,7 @@
 
   <div class="specs-grid reveal">
     <!-- Specs -->
+    {% if service.get_specs %}
     <div class="specs-card">
       <div class="specs-card-head">
         <div class="mini-eyebrow">
@@ -230,18 +232,15 @@
       </div>
 
       <div class="spec-list">
-        <div class="spec-item"><div class="spec-key">Minimum Plot</div><div class="spec-val">200 sqm (smaller projects case-by-case)</div></div>
-        <div class="spec-item"><div class="spec-key">Design Style</div><div class="spec-val">Tropical, Contemporary, Desert-Modern, Formal, Cottage — all styles</div></div>
-        <div class="spec-item"><div class="spec-key">Plants</div><div class="spec-val">Climate-adapted species; sourced locally & imported on request</div></div>
-        <div class="spec-item"><div class="spec-key">Hardscaping</div><div class="spec-val">Natural stone, porcelain, timber decking, exposed aggregate, gravel</div></div>
-        <div class="spec-item"><div class="spec-key">Irrigation</div><div class="spec-val">Smart drip + micro-spray; app-controlled; moisture-sensor ready</div></div>
-        <div class="spec-item"><div class="spec-key">Lighting</div><div class="spec-val">LED architectural; uplighting, path, underwater — all programmable</div></div>
-        <div class="spec-item"><div class="spec-key">Guarantee</div><div class="spec-val">2-year structural & planting guarantee; extended on request</div></div>
-        <div class="spec-item"><div class="spec-key">Maintenance</div><div class="spec-val">Optional monthly, quarterly, or annual care plans available</div></div>
+        {% for spec in service.get_specs %}
+        <div class="spec-item"><div class="spec-key">{{ spec.key }}</div><div class="spec-val">{{ spec.value }}</div></div>
+        {% endfor %}
       </div>
     </div>
+    {% endif %}
 
     <!-- FAQ -->
+    {% if service.get_faqs %}
     <div class="faq-card">
       <div class="specs-card-head">
         <div class="mini-eyebrow">
@@ -251,66 +250,29 @@
       </div>
 
       <div class="faq-list">
+        {% for faq in service.get_faqs %}
         <div class="faq-item">
           <button class="faq-q" type="button" onclick="toggleFaq(this)">
-            <span>How long does a typical villa garden take?</span>
+            <span>{{ faq.question }}</span>
             <i class="fas fa-plus"></i>
           </button>
           <div class="faq-a">
-            Most residential villa gardens are completed within 4–8 weeks from design sign-off, depending on plot size and complexity. We provide a detailed project timeline at the quotation stage.
+            {{ faq.answer }}
           </div>
         </div>
-
-        <div class="faq-item">
-          <button class="faq-q" type="button" onclick="toggleFaq(this)">
-            <span>Do you work during summer months?</span>
-            <i class="fas fa-plus"></i>
-          </button>
-          <div class="faq-a">
-            Yes. Our team is experienced working in Dubai's summer heat and we adapt our scheduling — typically starting early morning — to ensure quality is never compromised. We also time planting for optimal establishment success.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-q" type="button" onclick="toggleFaq(this)">
-            <span>Can I see my design before work starts?</span>
-            <i class="fas fa-plus"></i>
-          </button>
-          <div class="faq-a">
-            Absolutely. Every project includes a full 3D visualization — photorealistic renders, a walkthrough video, and day/night lighting simulations — so you experience your garden before any work begins. Revisions are included.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-q" type="button" onclick="toggleFaq(this)">
-            <span>What areas of Dubai do you cover?</span>
-            <i class="fas fa-plus"></i>
-          </button>
-          <div class="faq-a">
-            We serve all areas across Dubai, Abu Dhabi, and Sharjah — including Dubai Hills, Arabian Ranches, Palm Jumeirah, JVC, MBR City, Meydan, Damac Hills, and all premium villa communities.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-q" type="button" onclick="toggleFaq(this)">
-            <span>Do you offer ongoing maintenance after completion?</span>
-            <i class="fas fa-plus"></i>
-          </button>
-          <div class="faq-a">
-            Yes. We offer flexible maintenance plans — monthly, bi-monthly, or quarterly visits covering pruning, fertilising, irrigation adjustment, seasonal planting, and general health checks.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-q" type="button" onclick="toggleFaq(this)">
-            <span>What is included in your 2-year guarantee?</span>
-            <i class="fas fa-plus"></i>
-          </button>
-          <div class="faq-a">
-            Our guarantee covers all structural elements (walls, pathways, irrigation), lighting installations, and specified plants. If a plant fails under normal care conditions within 2 years, we replace it at no charge.
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </div>
+    {% endif %}
   </div>
+</section>
+
+<script>
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  item.classList.toggle('open');
+}
+</script>
+{% endif %}
+
 </section>

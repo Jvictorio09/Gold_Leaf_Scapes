@@ -1,0 +1,64 @@
+<!-- ════ PROJECTS GRID ════ -->
+{% if projects %}
+<section class="projects-catalog-section">
+  <div class="projects-grid" id="projectsGrid">
+    {% for project in projects %}
+    <a href="{{ project.get_absolute_url }}" class="project-catalog-card reveal {% if forloop.counter == 2 %}reveal-d1{% elif forloop.counter == 3 %}reveal-d2{% elif forloop.counter == 5 %}reveal-d1{% endif %}" data-category="{{ project.category|slugify }}">
+      <div class="project-catalog-bg {% if not project.hero_image_url %}project-bg-{% cycle '1' '2' '3' '4' %}{% endif %}">
+        {% if project.hero_image_url %}
+        <div style="position:absolute;inset:0;background-image:url('{{ project.hero_image_url }}');background-size:cover;background-position:center;"></div>
+        {% else %}
+        <svg class="plant-deco" viewBox="0 0 380 400" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;opacity:0.1;">
+          <ellipse cx="190" cy="120" rx="120" ry="160" fill="rgba(184,146,42,0.25)"/>
+          <rect x="183" y="250" width="14" height="150" fill="rgba(184,146,42,0.2)"/>
+          <path d="M0 320 Q190 295 380 300 L380 400 L0 400Z" fill="rgba(184,146,42,0.15)"/>
+        </svg>
+        {% endif %}
+      </div>
+      <div class="project-catalog-overlay">
+        <div class="project-catalog-tag">
+          <i class="fas fa-map-marker-alt"></i> {{ project.location }}
+        </div>
+        <h3 class="project-catalog-title">{{ project.title }}</h3>
+        {% if project.category %}
+        <div class="project-catalog-category">
+          <i class="fas fa-tag"></i> {{ project.category }}
+        </div>
+        {% endif %}
+        {% if project.short_description %}
+        <p class="project-catalog-desc">{{ project.short_description|truncatewords:20 }}</p>
+        {% endif %}
+        <div class="project-catalog-link">
+          View Project <i class="fas fa-arrow-right"></i>
+        </div>
+      </div>
+    </a>
+    {% empty %}
+    <div class="project-catalog-card">
+      <p>No projects available yet.</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<script>
+function filterProjects(category, btn) {
+  // Remove active class from all buttons
+  document.querySelectorAll('#projectsFilterBar .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  // Filter projects
+  const cards = document.querySelectorAll('#projectsGrid .project-catalog-card');
+  cards.forEach(card => {
+    if (category === 'all' || card.dataset.category === category) {
+      card.style.display = 'block';
+      setTimeout(() => card.style.opacity = '1', 10);
+    } else {
+      card.style.opacity = '0';
+      setTimeout(() => card.style.display = 'none', 300);
+    }
+  });
+}
+</script>
+

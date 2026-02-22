@@ -1,0 +1,62 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Create Insight - Dashboard{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Create New Insight</h1>
+    <a href="{% url 'dashboard_insights_list' %}" class="text-blue-600 hover:underline mt-2 inline-block">
+        <i class="fas fa-arrow-left mr-2"></i>Back to Insights
+    </a>
+</div>
+
+<div class="bg-white rounded-lg shadow p-6">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-4">
+            <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title *</label>
+            <input type="text" name="title" id="title" required
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        
+        <div class="mb-4">
+            <label for="excerpt" class="block text-gray-700 text-sm font-bold mb-2">Excerpt</label>
+            <textarea name="excerpt" id="excerpt" rows="3"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+        </div>
+        
+        <div class="mb-4">
+            <label for="content" class="block text-gray-700 text-sm font-bold mb-2">Content</label>
+            <textarea name="content" id="content" rows="15"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+        </div>
+        
+        <div class="mb-4">
+            <label for="featured_image_url" class="block text-gray-700 text-sm font-bold mb-2">Featured Image URL (Cloudinary)</label>
+            <input type="url" name="featured_image_url" id="featured_image_url"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="https://res.cloudinary.com/...">
+            <p class="text-xs text-gray-500 mt-1">Upload images via Gallery and paste the URL here</p>
+        </div>
+        
+        <div class="mb-4">
+            <label for="status" class="block text-gray-700 text-sm font-bold mb-2">Status</label>
+            <select name="status" id="status" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+            </select>
+        </div>
+        
+        <div class="flex gap-4">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                <i class="fas fa-save mr-2"></i>Create Insight
+            </button>
+            <a href="{% url 'dashboard_insights_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

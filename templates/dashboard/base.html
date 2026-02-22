@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard - Gold Leaf Scapes{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-link.active {
+            background-color: #fbbf24;
+            color: #000;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 text-white flex flex-col">
+            <div class="p-6 border-b border-gray-700">
+                <h1 class="text-xl font-bold">Gold Leaf Scapes</h1>
+                <p class="text-sm text-gray-400 mt-1">Dashboard</p>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="{% url 'dashboard_home' %}" 
+                   class="sidebar-link block px-4 py-2 rounded hover:bg-gray-700 {% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">
+                    <i class="fas fa-home mr-2"></i> Overview
+                </a>
+                
+                {% if request.user.is_superuser or request.user.profile.is_admin|default:False %}
+                <a href="{% url 'dashboard_services_list' %}" 
+                   class="sidebar-link block px-4 py-2 rounded hover:bg-gray-700 {% if 'services' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-briefcase mr-2"></i> Services
+                </a>
+                {% endif %}
+                
+                <a href="{% url 'dashboard_insights_list' %}" 
+                   class="sidebar-link block px-4 py-2 rounded hover:bg-gray-700 {% if 'insight' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-blog mr-2"></i> Insights
+                </a>
+                
+                {% if request.user.is_superuser or request.user.profile.is_admin|default:False %}
+                <a href="{% url 'dashboard_heroes_list' %}" 
+                   class="sidebar-link block px-4 py-2 rounded hover:bg-gray-700 {% if 'hero' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-image mr-2"></i> Heroes
+                </a>
+                
+                <a href="{% url 'dashboard_metadata_list' %}" 
+                   class="sidebar-link block px-4 py-2 rounded hover:bg-gray-700 {% if 'metadata' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-tags mr-2"></i> SEO Metadata
+                </a>
+                {% endif %}
+                
+                <a href="{% url 'dashboard_gallery' %}" 
+                   class="sidebar-link block px-4 py-2 rounded hover:bg-gray-700 {% if 'gallery' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-images mr-2"></i> Gallery
+                </a>
+                
+                {% if request.user.is_superuser or request.user.profile.is_admin|default:False %}
+                <a href="{% url 'dashboard_users_list' %}" 
+                   class="sidebar-link block px-4 py-2 rounded hover:bg-gray-700 {% if 'users' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-users mr-2"></i> Users
+                </a>
+                {% endif %}
+            </nav>
+            
+            <div class="p-4 border-t border-gray-700">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm">{{ request.user.username }}</span>
+                    <a href="{% url 'dashboard_logout' %}" class="text-sm text-gray-400 hover:text-white">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                </div>
+                <p class="text-xs text-gray-400">
+                    {% if request.user.is_superuser %}
+                        Admin
+                    {% elif request.user.profile.is_admin|default:False %}
+                        Admin
+                    {% elif request.user.profile.is_blog_author|default:False %}
+                        Blog Author
+                    {% else %}
+                        User
+                    {% endif %}
+                </p>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <div class="p-8">
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for message in messages %}
+                            <div class="bg-{% if message.tags == 'error' %}red{% else %}green{% endif %}-100 border border-{% if message.tags == 'error' %}red{% else %}green{% endif %}-400 text-{% if message.tags == 'error' %}red{% else %}green{% endif %}-700 px-4 py-3 rounded mb-2">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+

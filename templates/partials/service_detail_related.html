@@ -1,9 +1,13 @@
 <!-- ════ RELATED ════ -->
+{% if service.get_related_services_list %}
 <section class="related-section reveal">
   <div class="eyebrow"><span class="gold-line" style="width:48px;"></span> You May Also Need</div>
   <h2 class="section-title">Related <em>Services</em></h2>
   <div class="related-grid">
+    {% for related in service.get_related_services_list %}
     <div class="rel-card">
+      {% if forloop.counter == 1 %}
+      <!-- First card - blue gradient (pool/water) -->
       <div class="rel-bg" style="background:linear-gradient(145deg,#b4cedd,#94b8cc);">
         <svg width="100%" height="100%" viewBox="0 0 380 300" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;opacity:0.6;">
           <rect x="40" y="120" width="300" height="150" rx="6" fill="rgba(60,140,200,0.4)"/>
@@ -12,9 +16,8 @@
           <ellipse cx="190" cy="195" rx="65" ry="20" fill="rgba(160,220,240,0.2)"/>
         </svg>
       </div>
-      <div class="rel-overlay"><div class="rel-tag"><i class="fas fa-water"></i> Water Features</div><div class="rel-title">Swimming Pool Design & Build</div><a href="{% url 'service_detail' %}" class="rel-link">View Service <i class="fas fa-arrow-right"></i></a></div>
-    </div>
-    <div class="rel-card">
+      {% elif forloop.counter == 2 %}
+      <!-- Second card - beige/gold gradient (pergola/structure) -->
       <div class="rel-bg" style="background:linear-gradient(145deg,#ddd0b8,#ccc0a4);">
         <svg width="100%" height="100%" viewBox="0 0 380 300" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;opacity:0.6;">
           <rect x="30" y="90" width="320" height="10" rx="3" fill="rgba(160,120,70,0.6)"/>
@@ -30,9 +33,8 @@
           <rect x="0" y="260" width="380" height="40" fill="rgba(100,136,72,0.3)"/>
         </svg>
       </div>
-      <div class="rel-overlay"><div class="rel-tag"><i class="fas fa-archway"></i> Structures</div><div class="rel-title">Pergolas & Pavilions</div><a href="{% url 'service_detail' %}" class="rel-link">View Service <i class="fas fa-arrow-right"></i></a></div>
-    </div>
-    <div class="rel-card">
+      {% else %}
+      <!-- Third card - green gradient (maintenance/garden) -->
       <div class="rel-bg" style="background:linear-gradient(145deg,#c4d4b8,#a8c0a0);">
         <svg width="100%" height="100%" viewBox="0 0 380 300" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;opacity:0.6;">
           <rect x="0" y="200" width="380" height="100" fill="rgba(88,120,60,0.35)"/>
@@ -41,8 +43,29 @@
           <ellipse cx="270" cy="173" rx="24" ry="7" fill="rgba(160,200,120,0.3)"/>
         </svg>
       </div>
-      <div class="rel-overlay"><div class="rel-tag"><i class="fas fa-seedling"></i> Maintenance</div><div class="rel-title">Garden Maintenance Plans</div><a href="{% url 'service_detail' %}" class="rel-link">View Service <i class="fas fa-arrow-right"></i></a></div>
+      {% endif %}
+      <div class="rel-overlay">
+        <div class="rel-tag">
+          {% if related.icon %}<i class="fas {{ related.icon }}"></i>{% endif %}
+          {% if related.hero_tag %}
+            {{ related.hero_tag|upper }}
+          {% else %}
+            {% with clean_title=related.get_clean_title|lower %}
+              {% if 'interior' in clean_title or 'greening' in clean_title %}INTERIOR LANDSCAPING
+              {% elif 'pool' in clean_title or 'water' in clean_title %}WATER FEATURES
+              {% elif 'pergola' in clean_title or 'pavilion' in clean_title %}STRUCTURES
+              {% elif 'maintenance' in clean_title %}LANDSCAPE MAINTENANCE
+              {% elif 'commercial' in clean_title %}COMMERCIAL LANDSCAPING
+              {% else %}OUTDOOR LANDSCAPING{% endif %}
+            {% endwith %}
+          {% endif %}
+        </div>
+        <div class="rel-title">{{ related.title|safe }}</div>
+        <a href="{{ related.get_absolute_url }}" class="rel-link">View Service <i class="fas fa-arrow-right"></i></a>
+      </div>
     </div>
+    {% endfor %}
   </div>
 </section>
+{% endif %}
 

@@ -101,7 +101,7 @@
         <i class="fas fa-chevron-right"></i>
         <a href="{% url 'services' %}">Services</a>
         <i class="fas fa-chevron-right"></i>
-        <span style="color:var(--gold)">{{ service.title }}</span>
+        <span style="color:var(--gold)">{{ service.title|striptags }}</span>
       </div>
       {% if service.hero_tag %}
       <div class="hero-tag"><span class="gold-line" style="width:36px;"></span>{% if service.icon %}<i class="fas {{ service.icon }}" style="font-size:0.78rem;"></i>{% endif %} {{ service.hero_tag }}</div>

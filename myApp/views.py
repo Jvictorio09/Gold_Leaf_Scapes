@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import JsonResponse
@@ -83,6 +84,34 @@ def project_detail(request, slug):
     return render(request, 'project_detail.html', {
         'project': project,
         'related_projects': related_projects,
+    })
+
+def blog_overview(request):
+    """Blog overview page - list of all published insights"""
+    insights = Insight.objects.filter(status='published').order_by('-published_at', '-created_at')
+    
+    # Pagination
+    paginator = Paginator(insights, 12)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'blog_page/blog_overview.html', {
+        'insights': page_obj,
+        'page_obj': page_obj,
+    })
+
+def blog_detail(request, slug):
+    """Blog detail page - single insight/article"""
+    insight = get_object_or_404(Insight, slug=slug, status='published')
+    
+    # Get related insights (same author or recent)
+    related_insights = Insight.objects.exclude(id=insight.id).filter(
+        status='published'
+    ).order_by('-published_at', '-created_at')[:3]
+    
+    return render(request, 'blog_page/blog_detail.html', {
+        'insight': insight,
+        'related_insights': related_insights,
     })
 
 
@@ -213,7 +242,26 @@ def dashboard_insights_list(request):
     if hasattr(request.user, 'profile') and not request.user.profile.is_admin:
         insights = insights.filter(author=request.user)
     
-    return render(request, 'dashboard/insights/list.html', {'insights': insights})
+    # Calculate stats
+    from django.utils import timezone
+    from datetime import datetime
+    total_count = insights.count()
+    published_count = insights.filter(status='published').count()
+    draft_count = insights.filter(status='draft').count()
+    
+    # Count posts from current month
+    now = timezone.now()
+    this_month_count = insights.filter(created_at__year=now.year, created_at__month=now.month).count()
+    
+    context = {
+        'insights': insights,
+        'total_count': total_count,
+        'published_count': published_count,
+        'draft_count': draft_count,
+        'this_month_count': this_month_count,
+    }
+    
+    return render(request, 'dashboard/insights/list.html', context)
 
 
 @login_required
@@ -223,9 +271,13 @@ def dashboard_insight_create(request):
     if request.method == 'POST':
         title = request.POST.get('title')
         excerpt = request.POST.get('excerpt', '')
-        content = request.POST.get('content', '')
+        content = request.POST.get('content', '')  # Editor.js JSON
         featured_image_url = request.POST.get('featured_image_url', '')
         status = request.POST.get('status', 'draft')
+        slug = request.POST.get('slug', '').strip()
+        
+        # Content can be HTML (from Quill) or JSON (from Editor.js)
+        # Both are acceptable, so we keep the content as-is
         
         insight = Insight.objects.create(
             title=title,
@@ -235,6 +287,18 @@ def dashboard_insight_create(request):
             status=status,
             author=request.user
         )
+        
+        # Set slug if provided
+        if slug:
+            insight.slug = slug
+            insight.save()
+        
+        # Set published_at if publishing
+        if status == 'published' and not insight.published_at:
+            from django.utils import timezone
+            insight.published_at = timezone.now()
+            insight.save()
+        
         return redirect('dashboard_insights_list')
     
     return render(request, 'dashboard/insights/create.html')
@@ -255,9 +319,30 @@ def dashboard_insight_edit(request, pk):
     if request.method == 'POST':
         insight.title = request.POST.get('title')
         insight.excerpt = request.POST.get('excerpt', '')
-        insight.content = request.POST.get('content', '')
+        content = request.POST.get('content', '')  # Editor.js JSON
+        
+        # Content can be HTML (from Quill) or JSON (from Editor.js)
+        # Both are acceptable, so we update the content
+        if content:
+            insight.content = content
+        
         insight.featured_image_url = request.POST.get('featured_image_url', '')
-        insight.status = request.POST.get('status', 'draft')
+        status = request.POST.get('status', 'draft')
+        slug = request.POST.get('slug', '').strip()
+        
+        # Update slug if provided
+        if slug:
+            insight.slug = slug
+        
+        # Handle status change
+        old_status = insight.status
+        insight.status = status
+        
+        # Set published_at if publishing for the first time
+        if status == 'published' and old_status != 'published' and not insight.published_at:
+            from django.utils import timezone
+            insight.published_at = timezone.now()
+        
         insight.save()
         return redirect('dashboard_insights_list')
     

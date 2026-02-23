@@ -1,76 +1,321 @@
-<!-- ═══════════════ SERVICES STRIP ═══════════════ -->
-<section class="logos-section">
-  <div class="logos-container reveal">
-    <div class="logos-header">
-      <div class="section-eyebrow">
-        <span class="gold-line"></span>
-        <span>What We Do</span>
-      </div>
-      <h2 class="section-title">Our <em>Services</em></h2>
-      <p class="logos-desc">
-        From concept to completion, we take care of every detail — design, drawings, approvals, and delivery.
-      </p>
-    </div>
-    
-    <div class="logos-marquee-wrapper">
-      <div class="logos-marquee">
-        <div class="logo-item">
-          <div class="logo-image-wrapper">
-            <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748783/3_ohigon.png" alt="Fitout Services" loading="lazy">
+<style>
+  /* ═══════════════ TRUST STRIP (MARQUEE / COLORFUL) ═══════════════ */
+
+:root{
+  /* layout */
+  --trust-max: 1200px;
+  --trust-pad-y: 96px;
+  --trust-pad-x: 24px;
+
+  /* colors */
+  --trust-bg: #FEFCF7;
+  --trust-ink: #1C2414;
+  --trust-ink-2: rgba(28, 36, 20, 0.7);
+  --trust-line: rgba(201, 168, 76, 0.2);
+
+  /* type */
+  --trust-title-size: clamp(30px, 3.2vw, 44px);
+  --trust-title-track: 0.06em;
+
+  /* logo treatment */
+  --trust-logo-maxh: 120px;
+}
+
+.trust-strip{
+  background: var(--trust-bg);
+  padding: var(--trust-pad-y) 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.trust-shell{
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--trust-pad-x);
+}
+
+.trust-topline{
+  height: 1px;
+  background: var(--trust-line);
+  margin-bottom: 44px;
+}
+
+.trust-header{
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.trust-title{
+  margin: 0;
+  font-weight: 400;
+  font-size: var(--trust-title-size);
+  letter-spacing: var(--trust-title-track);
+  text-transform: uppercase;
+  color: var(--trust-ink);
+  line-height: 1.15;
+}
+
+.trust-title-muted{
+  color: var(--trust-ink-2);
+}
+
+.trust-logos-wrapper{
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding: 40px 0;
+}
+
+.trust-logos-container{
+  display: flex;
+  width: fit-content;
+  animation: marquee 30s linear infinite;
+  will-change: transform;
+}
+
+.trust-logos{
+  display: flex;
+  gap: 60px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.trust-logos-duplicate{
+  display: flex;
+  gap: 60px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.trust-logo{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  transition: transform 0.3s ease;
+}
+
+.trust-logo img{
+  max-height: var(--trust-logo-maxh);
+  height: var(--trust-logo-maxh);
+  width: auto;
+  object-fit: contain;
+  opacity: 1;
+  filter: brightness(1) saturate(1.1);
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.trust-logo:hover img{
+  transform: scale(1.15);
+  filter: brightness(1.1) saturate(1.2);
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-25%);
+  }
+}
+
+/* Pause on hover */
+.trust-logos-wrapper:hover .trust-logos-container {
+  animation-play-state: paused;
+}
+
+/* responsive */
+@media (max-width: 900px){
+  :root {
+    --trust-logo-maxh: 100px;
+  }
+  .trust-logos,
+  .trust-logos-duplicate {
+    gap: 60px;
+  }
+  .trust-logos-wrapper {
+    padding: 30px 0;
+  }
+}
+
+@media (max-width: 520px){
+  .trust-strip{
+    padding: 72px 0;
+  }
+  .trust-shell {
+    padding: 0 18px;
+  }
+  :root {
+    --trust-logo-maxh: 80px;
+  }
+  .trust-logos,
+  .trust-logos-duplicate {
+    gap: 50px;
+  }
+  .trust-logos-wrapper {
+    padding: 20px 0;
+  }
+}
+</style>
+<!-- ═══════════════ TRUST STRIP / AUTHORITY LOGOS ═══════════════ -->
+<section class="trust-strip" aria-label="Authorities and partners">
+  <div class="trust-shell">
+
+    <div class="trust-topline" aria-hidden="true"></div>
+
+    <header class="trust-header">
+      <h2 class="trust-title">
+        Fitout, Landscape Drawings<br />
+        <span class="trust-title-muted">&amp; Authority Approvals</span>
+      </h2>
+      <!-- optional small subtext -->
+      <!-- <p class="trust-sub">Approved workflows for faster, compliant delivery.</p> -->
+    </header>
+
+    <div class="trust-logos-wrapper">
+      <div class="trust-logos-container">
+        <!-- First set -->
+        <div class="trust-logos" role="list">
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/1_zr8dpk.png"
+              alt="Dubai Development Authority"
+              loading="lazy"
+            />
           </div>
-          
+
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748783/3_ohigon.png"
+              alt="Nakheel"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/2_to5rmk.png"
+              alt="Trakhees"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/4_qh9mc4.png"
+              alt="Emaar"
+              loading="lazy"
+            />
+          </div>
         </div>
         
-        <div class="logo-item">
-          <div class="logo-image-wrapper">
-            <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/1_zr8dpk.png" alt="Landscape Drawings" loading="lazy">
+        <!-- Duplicate 1 -->
+        <div class="trust-logos-duplicate" role="list" aria-hidden="true">
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/1_zr8dpk.png"
+              alt="Dubai Development Authority"
+              loading="lazy"
+            />
           </div>
-         
-        </div>
-        
-        <div class="logo-item">
-          <div class="logo-image-wrapper">
-            <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/2_to5rmk.png" alt="Authority Approvals" loading="lazy">
+
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748783/3_ohigon.png"
+              alt="Nakheel"
+              loading="lazy"
+            />
           </div>
-          
-        </div>
-        
-        <div class="logo-item">
-          <div class="logo-image-wrapper">
-            <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/4_qh9mc4.png" alt="Professional Services" loading="lazy">
+
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/2_to5rmk.png"
+              alt="Trakhees"
+              loading="lazy"
+            />
           </div>
-         
+
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/4_qh9mc4.png"
+              alt="Emaar"
+              loading="lazy"
+            />
+          </div>
         </div>
 
-        <!-- Duplicate for seamless loop -->
-        <div class="logo-item">
-          <div class="logo-image-wrapper">
-            <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748783/3_ohigon.png" alt="Fitout Services" loading="lazy">
+        <!-- Duplicate 2 -->
+        <div class="trust-logos-duplicate" role="list" aria-hidden="true">
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/1_zr8dpk.png"
+              alt="Dubai Development Authority"
+              loading="lazy"
+            />
           </div>
-          
+
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748783/3_ohigon.png"
+              alt="Nakheel"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/2_to5rmk.png"
+              alt="Trakhees"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/4_qh9mc4.png"
+              alt="Emaar"
+              loading="lazy"
+            />
+          </div>
         </div>
-        
-        <div class="logo-item">
-          <div class="logo-image-wrapper">
-            <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/1_zr8dpk.png" alt="Landscape Drawings" loading="lazy">
+
+        <!-- Duplicate 3 -->
+        <div class="trust-logos-duplicate" role="list" aria-hidden="true">
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/1_zr8dpk.png"
+              alt="Dubai Development Authority"
+              loading="lazy"
+            />
           </div>
-          
-        </div>
-        
-        <div class="logo-item">
-          <div class="logo-image-wrapper">
-            <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/2_to5rmk.png" alt="Authority Approvals" loading="lazy">
+
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748783/3_ohigon.png"
+              alt="Nakheel"
+              loading="lazy"
+            />
           </div>
-          
-        </div>
-        
-        <div class="logo-item">
-          <div class="logo-image-wrapper">
-            <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/4_qh9mc4.png" alt="Professional Services" loading="lazy">
+
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/2_to5rmk.png"
+              alt="Trakhees"
+              loading="lazy"
+            />
           </div>
-         
+
+          <div class="trust-logo" role="listitem">
+            <img
+              src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771748784/4_qh9mc4.png"
+              alt="Emaar"
+              loading="lazy"
+            />
+          </div>
         </div>
       </div>
     </div>
+
   </div>
 </section>

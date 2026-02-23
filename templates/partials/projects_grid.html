@@ -19,7 +19,7 @@
         <div class="project-catalog-tag">
           <i class="fas fa-map-marker-alt"></i> {{ project.location }}
         </div>
-        <h3 class="project-catalog-title">{{ project.title }}</h3>
+        <h3 class="project-catalog-title">{{ project.title|safe }}</h3>
         {% if project.category %}
         <div class="project-catalog-category">
           <i class="fas fa-tag"></i> {{ project.category }}

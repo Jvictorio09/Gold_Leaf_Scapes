@@ -1,11 +1,47 @@
-<!-- ════ FOOTER ════ -->
+<!-- ═══════════════ FOOTER ═══════════════ -->
 <footer>
-  <div class="footer-logo">Gold Leaf <span>Scapes</span></div>
-  <p class="footer-copy">© 2025 Gold Leaf Scapes LLC. Dubai, UAE.</p>
-  <div class="footer-links">
-    <a href="{% url 'services' %}">← Back to Services</a>
-    <a href="#">Privacy Policy</a>
-    <a href="#">Get a Quote</a>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo-image">
+        <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771830340/Ara_s_Logo_1_gdpkdq.png" alt="Gold Leaf Scapes" loading="lazy">
+      </div>
+      <p>A leading landscaping and interior greening studio in the UAE, creating refined, nature-inspired environments for the past three years. Serving Dubai, Abu Dhabi, and Sharjah.</p>
+    </div>
+
+    <div class="footer-col">
+      <h5>Services</h5>
+      {% for service in footer_services %}
+      <a href="{{ service.get_absolute_url }}">{{ service.get_clean_title }}</a>
+      {% empty %}
+      <a href="{% url 'services' %}">View All Services</a>
+      {% endfor %}
+    </div>
+
+    <div class="footer-col">
+      <h5>Company</h5>
+      <a href="#">About Us</a>
+      <a href="{% url 'projects' %}">Our Projects</a>
+      <a href="{% url 'blog_overview' %}">Blog</a>
+      <a href="#">Careers</a>
+    </div>
+
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <a href="tel:+971502009863"><i class="fas fa-phone" style="color:var(--gold-light); margin-right:8px; font-size:0.75rem;"></i>+971 50 200 9863</a>
+      <a href="mailto:info@goldleafscapes.com"><i class="fas fa-envelope" style="color:var(--gold-light); margin-right:8px; font-size:0.75rem;"></i>info@goldleafscapes.com</a>
+      <a href="#"><i class="fas fa-map-marker-alt" style="color:var(--gold-light); margin-right:8px; font-size:0.75rem;"></i>Dubai, UAE</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2025 Gold Leaf Scapes LLC. All Rights Reserved.</p>
+    <div class="social-links">
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#"><i class="fab fa-youtube"></i></a>
+      <a href="#"><i class="fab fa-whatsapp"></i></a>
+    </div>
   </div>
 </footer>
 

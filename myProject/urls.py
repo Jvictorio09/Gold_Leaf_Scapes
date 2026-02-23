@@ -11,6 +11,8 @@ urlpatterns = [
     path('services/<slug:slug>/', views.service_detail, name='service_detail'),
     path('projects/', views.projects, name='projects'),
     path('projects/<slug:slug>/', views.project_detail, name='project_detail'),
+    path('blog/', views.blog_overview, name='blog_overview'),
+    path('blog/<slug:slug>/', views.blog_detail, name='blog_detail'),
     
     # Dashboard authentication
     path('dashboard/login/', views.dashboard_login, name='dashboard_login'),

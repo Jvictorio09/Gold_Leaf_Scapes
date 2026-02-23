@@ -5,7 +5,9 @@
     <h2 class="section-title">Your Garden,<br><em>Reimagined</em></h2>
     {% if service.overview_content %}
     <div class="overview-body" style="margin-top:36px;">
-      {{ service.overview_content|linebreaks|safe }}
+      {% autoescape off %}
+      {{ service.overview_content|linebreaks }}
+      {% endautoescape %}
     </div>
     {% endif %}
   </div>

@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Journal — Golden Leaf Scapes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --forest: #0f290d;
+      --forest-mid: #162a1e;
+      --forest-light: #1e3828;
+      --gold: #C9A84C;
+      --gold-light: #E5C97E;
+      --gold-pale: #f5e9c8;
+      --cream: #F7F3EC;
+      --text-muted: #8A9680;
+      --text-dark: #1C2414;
+      --text-mid: #4A5640;
+      --linen: #E8E0CC;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--forest);
+      color: var(--cream);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+
+    /* ─── NAV (from base.html) ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 12px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s, padding 0.4s;
+      background: var(--forest);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    nav.scrolled {
+      background: var(--forest);
+      backdrop-filter: blur(12px);
+      padding: 10px 48px;
+      border-bottom: 1px solid rgba(201,168,76,0.3);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+    }
+    .logo-image {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      height: 50px;
+      transition: opacity 0.2s;
+    }
+    .logo-image:hover {
+      opacity: 0.9;
+    }
+    .logo-image img {
+      height: 40px;
+      width: auto;
+      object-fit: contain;
+    }
+    .logo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--cream);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .logo-golden {
+      color: var(--gold) !important;
+      font-weight: 700;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 0.94rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cream);
+      text-decoration: none;
+      margin-left: 36px;
+      opacity: 0.9;
+      transition: opacity 0.2s, color 0.2s;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--gold-light); }
+    .btn-nav {
+      background: var(--gold);
+      color: var(--forest) !important;
+      opacity: 1 !important;
+      padding: 10px 22px;
+      font-weight: 500 !important;
+      letter-spacing: 0.14em !important;
+      text-decoration: none;
+      border-radius: 0;
+    }
+    .btn-nav:hover { background: var(--gold-light) !important; color: var(--forest) !important; }
+
+    /* ─── FOOTER (from base.html) ─── */
+    footer {
+      background: var(--forest);
+      border-top: 1px solid rgba(201,168,76,0.2);
+      padding: 64px 80px 36px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+    .footer-brand .logo-image {
+      height: 200px;
+      margin-bottom: 20px;
+    }
+    .footer-brand .logo-image img {
+      height: 100%;
+      width: auto;
+      object-fit: contain;
+    }
+    .footer-brand p {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--cream);
+      margin-top: 20px;
+      opacity: 0.9;
+    }
+    .footer-col h5 {
+      font-size: 0.82rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 20px;
+    }
+    .footer-col a {
+      display: block;
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--cream);
+      text-decoration: none;
+      margin-bottom: 10px;
+      transition: color 0.2s;
+      opacity: 0.9;
+    }
+    .footer-col a:hover { color: var(--gold-light); opacity: 1; }
+    .footer-bottom {
+      border-top: 1px solid rgba(201,168,76,0.2);
+      padding-top: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-bottom p {
+      font-size: 0.9rem;
+      color: var(--cream);
+      letter-spacing: 0.05em;
+      opacity: 0.8;
+    }
+    .social-links {
+      display: flex;
+      gap: 16px;
+    }
+    .social-links a {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cream);
+      text-decoration: none;
+      font-size: 0.96rem;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      opacity: 0.9;
+    }
+    .social-links a:hover {
+      border-color: var(--gold-light);
+      color: var(--gold-light);
+      opacity: 1;
+    }
+
+    /* ─── HERO ─── */
+    .blog-hero {
+      padding: 10rem 5% 6rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: end;
+      border-bottom: 1px solid rgba(201,168,76,0.12);
+      position: relative; overflow: hidden;
+    }
+    .blog-hero::before {
+      content: '';
+      position: absolute; top: 0; right: 0; width: 55%; height: 100%;
+      background: radial-gradient(ellipse at 80% 40%, rgba(201,168,76,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-label {
+      font-size: .68rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.2rem;
+      display: flex; align-items: center; gap: .8rem;
+    }
+    .hero-label::before { content: ''; width: 2rem; height: 1px; background: var(--gold); display: inline-block; }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 5vw, 5.5rem);
+      font-weight: 300; line-height: 1.05;
+      color: var(--cream);
+    }
+    .hero-title em { color: var(--gold); font-style: italic; }
+    .hero-subtitle {
+      font-size: .9rem; line-height: 1.8; color: var(--text-muted);
+      max-width: 28rem; margin-top: 1.5rem;
+    }
+    .hero-stats { display: flex; gap: 3rem; padding-top: 2rem; border-top: 1px solid rgba(201,168,76,0.12); margin-top: 2rem; }
+    .stat-num { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; color: var(--gold); line-height: 1; }
+    .stat-label { font-size: .68rem; letter-spacing: .15em; text-transform: uppercase; color: var(--text-muted); margin-top: .3rem; }
+
+    /* Featured post right side */
+    .hero-featured {
+      position: relative;
+      border: 1px solid rgba(201,168,76,0.18);
+      overflow: hidden; cursor: pointer;
+    }
+    .hero-featured:hover .feat-img { transform: scale(1.04); }
+    .feat-img {
+      width: 100%; height: 22rem; object-fit: cover;
+      background: linear-gradient(135deg, #1e3828 0%, #0d2018 100%);
+      transition: transform .7s cubic-bezier(.25,.46,.45,.94);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    /* SVG decorative placeholder for featured image */
+    .feat-img-inner {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #162a1e 0%, #0d1f16 50%, #1a2e20 100%);
+      position: relative;
+    }
+    .feat-img-inner::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c9a84c' stroke-width='0.3' opacity='0.15'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3Ccircle cx='30' cy='30' r='10'/%3E%3Cline x1='10' y1='30' x2='50' y2='30'/%3E%3Cline x1='30' y1='10' x2='30' y2='50'/%3E%3C/g%3E%3C/svg%3E") repeat;
+    }
+    .feat-leaf {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    }
+    .feat-leaf svg { width: 8rem; height: 8rem; opacity: .2; }
+    .feat-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(13,32,24,.95) 0%, rgba(13,32,24,.3) 60%, transparent 100%);
+    }
+    .feat-content { padding: 1.75rem; }
+    .feat-cat {
+      display: inline-block; font-size: .62rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--gold); border: 1px solid rgba(201,168,76,.35); padding: .3rem .75rem;
+      margin-bottom: 1rem;
+    }
+    .feat-title {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.65rem; font-weight: 400;
+      line-height: 1.2; color: var(--cream); margin-bottom: .75rem;
+    }
+    .feat-meta { display: flex; align-items: center; gap: 1.5rem; font-size: .72rem; color: var(--text-muted); letter-spacing: .08em; }
+    .feat-read { margin-top: 1.25rem; font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: .5rem; text-decoration: none; }
+    .feat-read i { transition: transform .3s; }
+    .hero-featured:hover .feat-read i { transform: translateX(4px); }
+
+    /* ─── FILTERS ─── */
+    .filters-bar {
+      padding: 2.5rem 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+    }
+    .filter-tabs { display: flex; gap: 0; }
+    .filter-tab {
+      font-size: .7rem; letter-spacing: .18em; text-transform: uppercase;
+      padding: .6rem 1.4rem; cursor: pointer; border: 1px solid transparent;
+      color: rgba(249,244,235,.45); transition: all .25s; background: none;
+      font-family: 'Jost', sans-serif;
+    }
+    .filter-tab:hover { color: var(--cream); }
+    .filter-tab.active {
+      color: var(--gold); border-color: rgba(201,168,76,.35);
+      background: rgba(201,168,76,.06);
+    }
+    .search-wrap { position: relative; }
+    .search-wrap input {
+      background: rgba(255,255,255,.04); border: 1px solid rgba(201,168,76,.2);
+      color: var(--cream); font-family: 'Jost', sans-serif; font-size: .8rem;
+      padding: .6rem 1rem .6rem 2.5rem; width: 18rem; outline: none;
+      transition: border-color .3s;
+    }
+    .search-wrap input::placeholder { color: var(--text-muted); }
+    .search-wrap input:focus { border-color: rgba(201,168,76,.5); }
+    .search-wrap i { position: absolute; left: .85rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: .75rem; }
+
+    /* ─── GRID ─── */
+    .blog-grid {
+      padding: 4rem 5%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .blog-card {
+      position: relative; overflow: hidden; cursor: pointer;
+      background: var(--forest-mid);
+      border: 1px solid rgba(201,168,76,0.08);
+      transition: border-color .4s;
+    }
+    .blog-card:hover { border-color: rgba(201,168,76,0.3); }
+    .card-img {
+      width: 100%; height: 15rem;
+      transition: transform .7s cubic-bezier(.25,.46,.45,.94);
+      position: relative; overflow: hidden;
+    }
+    .blog-card:hover .card-img { transform: scale(1.04); }
+    /* Different tinted image placeholders per category */
+    .card-img-inner { width: 100%; height: 100%; position: relative; }
+    .card-img-inner.villa { background: linear-gradient(135deg, #1a3020 0%, #0e2318 100%); }
+    .card-img-inner.pool { background: linear-gradient(135deg, #0e1f2e 0%, #0a1520 100%); }
+    .card-img-inner.design { background: linear-gradient(135deg, #1f1a0e 0%, #1a1208 100%); }
+    .card-img-inner.interior { background: linear-gradient(135deg, #1e1020 0%, #160a18 100%); }
+    .card-img-inner.pergola { background: linear-gradient(135deg, #1a1008 0%, #130e06 100%); }
+    .card-img-inner.maint { background: linear-gradient(135deg, #0a1f14 0%, #081a10 100%); }
+    .card-img-inner::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 5 C20 5, 5 20, 5 40 S20 75, 40 75 S75 60, 75 40 S60 5, 40 5 Z' fill='none' stroke='%23c9a84c' stroke-width='0.4' opacity='0.12'/%3E%3C/svg%3E") center/cover;
+    }
+    .card-icon {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; color: rgba(201,168,76,.18);
+    }
+    .card-content { padding: 1.5rem; }
+    .card-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: .85rem; }
+    .card-cat {
+      font-size: .6rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--gold); padding: .25rem .65rem;
+      border: 1px solid rgba(201,168,76,.25);
+    }
+    .card-date { font-size: .65rem; letter-spacing: .1em; color: var(--text-muted); }
+    .card-title {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 400;
+      line-height: 1.25; color: var(--cream); margin-bottom: .75rem;
+      transition: color .3s;
+    }
+    .blog-card:hover .card-title { color: var(--gold-light); }
+    .card-excerpt { font-size: .8rem; line-height: 1.75; color: var(--text-muted); margin-bottom: 1.25rem; }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid rgba(201,168,76,.1); }
+    .author-info { display: flex; align-items: center; gap: .6rem; }
+    .author-avatar {
+      width: 1.8rem; height: 1.8rem; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--forest-light));
+      display: flex; align-items: center; justify-content: center;
+      font-size: .6rem; color: var(--forest); font-weight: 600;
+    }
+    .author-name { font-size: .68rem; letter-spacing: .08em; color: var(--text-muted); }
+    .read-time { font-size: .65rem; letter-spacing: .1em; color: rgba(201,168,76,.6); display: flex; align-items: center; gap: .35rem; }
+
+    /* ─── LARGE FEATURE ROW ─── */
+    .feature-row {
+      padding: 0 5% 4rem;
+      display: grid; grid-template-columns: 1.4fr 1fr; gap: 2px;
+    }
+    .feature-row .blog-card .card-img { height: 26rem; }
+    .feature-row .blog-card:first-child .card-title { font-size: 1.85rem; }
+
+    /* ─── NEWSLETTER ─── */
+    .newsletter {
+      margin: 0 5% 5rem;
+      padding: 4rem;
+      background: var(--forest-light);
+      border: 1px solid rgba(201,168,76,.18);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+      position: relative; overflow: hidden;
+    }
+    .newsletter::before {
+      content: '';
+      position: absolute; right: -4rem; top: -4rem; width: 20rem; height: 20rem;
+      border-radius: 50%; border: 1px solid rgba(201,168,76,.08);
+    }
+    .newsletter::after {
+      content: '';
+      position: absolute; right: -2rem; top: -2rem; width: 14rem; height: 14rem;
+      border-radius: 50%; border: 1px solid rgba(201,168,76,.06);
+    }
+    .nl-label { font-size: .65rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+    .nl-title { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 300; line-height: 1.15; }
+    .nl-title em { color: var(--gold); font-style: italic; }
+    .nl-sub { font-size: .82rem; line-height: 1.75; color: var(--text-muted); margin-top: .75rem; }
+    .nl-form { display: flex; gap: 0; }
+    .nl-input {
+      flex: 1; background: rgba(255,255,255,.04); border: 1px solid rgba(201,168,76,.25);
+      border-right: none; color: var(--cream); font-family: 'Jost', sans-serif;
+      font-size: .8rem; padding: .9rem 1.2rem; outline: none;
+    }
+    .nl-input::placeholder { color: var(--text-muted); }
+    .nl-btn {
+      font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+      padding: .9rem 1.75rem; background: var(--gold); color: var(--forest);
+      border: none; cursor: pointer; font-family: 'Jost', sans-serif; font-weight: 500;
+      transition: background .3s;
+    }
+    .nl-btn:hover { background: var(--gold-light); }
+    .nl-privacy { font-size: .65rem; color: rgba(122,148,128,.5); margin-top: .75rem; display: flex; align-items: center; gap: .4rem; }
+
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .blog-hero > * { animation: fadeUp .9s cubic-bezier(.22,.61,.36,1) both; }
+    .blog-hero > *:nth-child(2) { animation-delay: .15s; }
+    .blog-card { animation: fadeUp .7s cubic-bezier(.22,.61,.36,1) both; }
+    .blog-card:nth-child(2) { animation-delay: .1s; }
+    .blog-card:nth-child(3) { animation-delay: .2s; }
+    .blog-card:nth-child(4) { animation-delay: .3s; }
+    .blog-card:nth-child(5) { animation-delay: .1s; }
+    .blog-card:nth-child(6) { animation-delay: .2s; }
+
+    /* ─── PAGINATION ─── */
+    .pagination {
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+      padding: 3rem 0 4rem;
+    }
+    .pg-btn {
+      width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(201,168,76,.2); color: var(--text-muted); font-size: .8rem;
+      cursor: pointer; transition: all .25s; font-family: 'Jost', sans-serif; background: none;
+    }
+    .pg-btn:hover, .pg-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,.06); }
+
+    @media (max-width: 1024px) {
+      .blog-hero { grid-template-columns: 1fr; }
+      .blog-grid { grid-template-columns: 1fr 1fr; }
+      .feature-row { grid-template-columns: 1fr; }
+      .newsletter { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .blog-grid { grid-template-columns: 1fr; }
+      nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+{% load static %}
+{% include 'partials/nav.html' %}
+
+<!-- HERO -->
+<section class="blog-hero">
+  <div>
+    <div class="hero-label">The Living Journal</div>
+    <h1 class="hero-title">Ideas That <em>Shape</em> Extraordinary Spaces</h1>
+    <p class="hero-subtitle">Design philosophy, landscaping expertise, and inspiration from Dubai's most distinguished outdoor studios — curated for those who refuse to settle for ordinary.</p>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">84+</div>
+        <div class="stat-label">Articles Published</div>
+      </div>
+      <div>
+        <div class="stat-num">12</div>
+        <div class="stat-label">Design Topics</div>
+      </div>
+      <div>
+        <div class="stat-num">13yr</div>
+        <div class="stat-label">Of Expertise</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-featured">
+    <div class="card-img">
+      <div class="card-img-inner villa">
+        <div class="card-icon"><i class="fas fa-seedling"></i></div>
+        <div class="feat-overlay"></div>
+      </div>
+    </div>
+    <div class="feat-content">
+      {% if page_obj|length > 0 %}
+        {% with featured=page_obj.0 %}
+          <span class="feat-cat">Design Philosophy</span>
+          <h2 class="feat-title">{{ featured.title|safe }}</h2>
+          <div class="feat-meta">
+            <span><i class="far fa-calendar" style="margin-right:.35rem"></i>{% if featured.published_at %}{{ featured.published_at|date:"F d, Y" }}{% else %}{{ featured.created_at|date:"F d, Y" }}{% endif %}</span>
+            <span><i class="far fa-clock" style="margin-right:.35rem"></i>8 min read</span>
+          </div>
+          <a href="{{ featured.get_absolute_url }}" class="feat-read">Read Article <i class="fas fa-arrow-right"></i></a>
+        {% endwith %}
+      {% else %}
+        <span class="feat-cat">Design Philosophy</span>
+        <h2 class="feat-title">The Art of Bringing the Desert to Life: Our Design Manifesto</h2>
+        <div class="feat-meta">
+          <span><i class="far fa-calendar" style="margin-right:.35rem"></i>February 14, 2025</span>
+          <span><i class="far fa-clock" style="margin-right:.35rem"></i>8 min read</span>
+        </div>
+        <a href="#" class="feat-read">Read Article <i class="fas fa-arrow-right"></i></a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- FILTERS -->
+<div class="filters-bar">
+  <div class="filter-tabs">
+    <button class="filter-tab active">All</button>
+    <button class="filter-tab">Landscaping</button>
+    <button class="filter-tab">Pools</button>
+    <button class="filter-tab">Interior Greening</button>
+    <button class="filter-tab">Maintenance</button>
+    <button class="filter-tab">Design Tips</button>
+  </div>
+  <div class="search-wrap">
+    <i class="fas fa-search"></i>
+    <input type="text" placeholder="Search articles..." />
+  </div>
+</div>
+
+<!-- FEATURE ROW -->
+{% if page_obj|length > 1 %}
+<div class="feature-row">
+  {% for insight in page_obj|slice:":2" %}
+  <a href="{{ insight.get_absolute_url }}" class="blog-card" style="text-decoration: none; color: inherit; display: block;">
+    <div class="card-img">
+      <div class="card-img-inner pool">
+        <div class="card-icon"><i class="fas fa-water"></i></div>
+      </div>
+    </div>
+    <div class="card-content">
+      <div class="card-meta">
+        <span class="card-cat">Design Philosophy</span>
+        <span class="card-date">{% if insight.published_at %}{{ insight.published_at|date:"M d, Y" }}{% else %}{{ insight.created_at|date:"M d, Y" }}{% endif %}</span>
+      </div>
+      <h3 class="card-title">{{ insight.title|safe }}</h3>
+      <p class="card-excerpt">{{ insight.excerpt|truncatewords:30|default:"Read more about this topic..." }}</p>
+      <div class="card-footer">
+        <div class="author-info">
+          <div class="author-avatar">{% if insight.author %}{{ insight.author.first_name|first|default:"" }}{{ insight.author.last_name|first|default:"" }}{% if not insight.author.first_name and not insight.author.last_name %}{{ insight.author.username|first|upper }}{{ insight.author.username|slice:"1:2"|upper }}{% endif %}{% else %}GL{% endif %}</div>
+          <span class="author-name">{% if insight.author %}{{ insight.author.get_full_name|default:insight.author.username }}{% else %}Gold Leaf Scapes{% endif %}</span>
+        </div>
+        <span class="read-time"><i class="far fa-clock"></i> 8 min</span>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- GRID -->
+<div class="blog-grid" style="padding-top:0">
+  {% for insight in page_obj|slice:"2:" %}
+  <a href="{{ insight.get_absolute_url }}" class="blog-card" style="text-decoration: none; color: inherit; display: block;">
+    <div class="card-img">
+      <div class="card-img-inner interior">
+        <div class="card-icon"><i class="fas fa-leaf"></i></div>
+      </div>
+    </div>
+    <div class="card-content">
+      <div class="card-meta">
+        <span class="card-cat">Design Philosophy</span>
+        <span class="card-date">{% if insight.published_at %}{{ insight.published_at|date:"M d, Y" }}{% else %}{{ insight.created_at|date:"M d, Y" }}{% endif %}</span>
+      </div>
+      <h3 class="card-title">{{ insight.title|safe }}</h3>
+      <p class="card-excerpt">{{ insight.excerpt|truncatewords:25|default:"Read more about this topic..." }}</p>
+      <div class="card-footer">
+        <div class="author-info">
+          <div class="author-avatar">{% if insight.author %}{{ insight.author.first_name|first|default:"" }}{{ insight.author.last_name|first|default:"" }}{% if not insight.author.first_name and not insight.author.last_name %}{{ insight.author.username|first|upper }}{{ insight.author.username|slice:"1:2"|upper }}{% endif %}{% else %}GL{% endif %}</div>
+          <span class="author-name">{% if insight.author %}{{ insight.author.get_full_name|default:insight.author.username }}{% else %}Gold Leaf Scapes{% endif %}</span>
+        </div>
+        <span class="read-time"><i class="far fa-clock"></i> 8 min</span>
+      </div>
+    </div>
+  </a>
+  {% empty %}
+  <p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 4rem 0;">No blog posts published yet. Check back soon!</p>
+  {% endfor %}
+</div>
+
+<!-- NEWSLETTER -->
+<div class="newsletter">
+  <div>
+    <div class="nl-label">Stay Inspired</div>
+    <h2 class="nl-title">The Journal, <em>Delivered</em> to Your Inbox</h2>
+    <p class="nl-sub">Bi-monthly design stories, seasonal care guides, and exclusive project reveals. For those who see their outdoor space as a living work of art.</p>
+  </div>
+  <div>
+    <div class="nl-form">
+      <input class="nl-input" type="email" placeholder="your@email.com"/>
+      <button class="nl-btn">Subscribe</button>
+    </div>
+    <p class="nl-privacy"><i class="fas fa-lock" style="font-size:.6rem"></i> No spam. Unsubscribe anytime. We respect your privacy.</p>
+  </div>
+</div>
+
+<!-- PAGINATION -->
+<div class="pagination">
+  <button class="pg-btn"><i class="fas fa-chevron-left"></i></button>
+  <button class="pg-btn active">1</button>
+  <button class="pg-btn">2</button>
+  <button class="pg-btn">3</button>
+  <button class="pg-btn">···</button>
+  <button class="pg-btn">8</button>
+  <button class="pg-btn"><i class="fas fa-chevron-right"></i></button>
+</div>
+
+{% include 'partials/footer.html' %}
+
+<script>
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

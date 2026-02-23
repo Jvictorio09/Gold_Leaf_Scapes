@@ -3,34 +3,33 @@
   <div class="footer-grid">
     <div class="footer-brand">
       <div class="logo-image">
-        <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771750229/GLS_2_rs4xu1.png" alt="Gold Leaf Scapes" loading="lazy">
+        <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771830340/Ara_s_Logo_1_gdpkdq.png" alt="Gold Leaf Scapes" loading="lazy">
       </div>
-      <p>Dubai's premier landscaping and interior greening studio, crafting extraordinary environments since 2012. Serving Dubai, Abu Dhabi, and Sharjah.</p>
+      <p>A leading landscaping and interior greening studio in the UAE, creating refined, nature-inspired environments for the past three years. Serving Dubai, Abu Dhabi, and Sharjah.</p>
     </div>
 
     <div class="footer-col">
       <h5>Services</h5>
-      <a href="#">Villa Landscaping</a>
-      <a href="#">Commercial Landscapes</a>
-      <a href="#">Swimming Pools</a>
-      <a href="#">Interior Greening</a>
-      <a href="#">Pergolas & Pavilions</a>
-      <a href="#">Garden Maintenance</a>
+      {% for service in footer_services %}
+      <a href="{{ service.get_absolute_url }}">{{ service.get_clean_title }}</a>
+      {% empty %}
+      <a href="{% url 'services' %}">View All Services</a>
+      {% endfor %}
     </div>
 
     <div class="footer-col">
       <h5>Company</h5>
       <a href="#">About Us</a>
       <a href="{% url 'projects' %}">Our Projects</a>
-      <a href="#">Blog</a>
+      <a href="{% url 'blog_overview' %}">Blog</a>
       <a href="#">Careers</a>
     </div>
 
     <div class="footer-col">
       <h5>Contact</h5>
-      <a href="tel:+971XXXXXXXX"><i class="fas fa-phone" style="color:var(--gold); margin-right:8px; font-size:0.75rem;"></i>+971 4 XXX XXXX</a>
-      <a href="mailto:hello@goldleafscapes.ae"><i class="fas fa-envelope" style="color:var(--gold); margin-right:8px; font-size:0.75rem;"></i>hello@goldleafscapes.ae</a>
-      <a href="#"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:8px; font-size:0.75rem;"></i>Al Barsha, Dubai, UAE</a>
+      <a href="tel:+971502009863"><i class="fas fa-phone" style="color:var(--gold-light); margin-right:8px; font-size:0.75rem;"></i>+971 50 200 9863</a>
+      <a href="mailto:info@goldleafscapes.com"><i class="fas fa-envelope" style="color:var(--gold-light); margin-right:8px; font-size:0.75rem;"></i>info@goldleafscapes.com</a>
+      <a href="#"><i class="fas fa-map-marker-alt" style="color:var(--gold-light); margin-right:8px; font-size:0.75rem;"></i>Dubai, UAE</a>
     </div>
   </div>
 

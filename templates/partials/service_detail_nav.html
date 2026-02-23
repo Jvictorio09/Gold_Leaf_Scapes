@@ -2,9 +2,15 @@
 {% load static %}
 <nav id="mainNav">
   <a href="{% url 'home' %}" class="logo-image">
-    <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771750229/GLS_2_rs4xu1.png" alt="Gold Leaf Scapes" loading="eager">
+    <img src="https://res.cloudinary.com/dkkwbqr8e/image/upload/v1771828066/2_fxujyr.png" alt="Golden Leaf Scapes" loading="eager">
+    <span class="logo-text"><span class="logo-golden">Golden</span> Leaf Scapes</span>
   </a>
-  <div class="nav-links">
+  <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
     <a href="{% url 'home' %}">Home</a>
     <a href="{% url 'services' %}" class="active">Services</a>
     <a href="{% url 'projects' %}">Projects</a>

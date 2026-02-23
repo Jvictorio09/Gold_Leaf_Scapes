@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ project.title }} – Gold Leaf Scapes Dubai{% endblock %}
+{% block title %}{{ project.title|striptags }} – Gold Leaf Scapes Dubai{% endblock %}
 
 {% block content %}
 <!-- ════ PROJECT HERO ════ -->
@@ -20,13 +20,13 @@
         <i class="fas fa-chevron-right"></i>
         <a href="{% url 'home' %}#portfolio">Portfolio</a>
         <i class="fas fa-chevron-right"></i>
-        <span style="color:var(--gold)">{{ project.title }}</span>
+        <span style="color:var(--gold)">{{ project.title|striptags }}</span>
       </div>
       <div class="project-hero-tag">
         <span class="gold-line" style="width:36px;"></span>
         <i class="fas fa-map-marker-alt" style="font-size:0.78rem;"></i> {{ project.location }}
       </div>
-      <h1 class="project-hero-title">{{ project.title }}</h1>
+      <h1 class="project-hero-title">{{ project.title|safe }}</h1>
       {% if project.category %}
       <div class="project-hero-category">
         <i class="fas fa-tag"></i> {{ project.category }}
@@ -90,7 +90,7 @@
   <div class="gallery-grid reveal">
     {% for image_url in project.get_gallery_list %}
     <div class="gallery-item">
-      <img src="{{ image_url }}" alt="{{ project.title }} - Image {{ forloop.counter }}" loading="lazy">
+      <img src="{{ image_url }}" alt="{{ project.title|striptags }} - Image {{ forloop.counter }}" loading="lazy">
     </div>
     {% endfor %}
   </div>
@@ -114,7 +114,7 @@
       {% endif %}
       <div class="related-project-overlay">
         <div class="related-project-tag">{{ related.location }}</div>
-        <div class="related-project-name">{{ related.title }}</div>
+        <div class="related-project-name">{{ related.title|safe }}</div>
         <div class="related-project-category">{{ related.category }}</div>
       </div>
     </a>

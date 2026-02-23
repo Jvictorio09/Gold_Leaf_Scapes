@@ -50,7 +50,7 @@
       </div>
       <div class="project-overlay">
         <div class="project-tag"><i class="fas fa-map-marker-alt"></i> {{ project.location }}</div>
-        <div class="project-name">{{ project.title }}</div>
+        <div class="project-name">{{ project.title|safe }}</div>
         <div class="project-loc"><i class="fas fa-tag"></i> {{ project.category }}</div>
       </div>
     </a>

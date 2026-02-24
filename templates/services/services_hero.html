@@ -32,10 +32,32 @@
     <span style="color:var(--gold)">Services</span>
   </div>
 
-  <h1>Our <em>Services</em></h1>
+  <h1>
+    {% if hero and hero.title %}
+      {{ hero.title|safe }}
+    {% else %}
+      Our <em>Services</em>
+    {% endif %}
+  </h1>
 
   <div class="hero-bottom">
-    <p class="hero-desc">From sweeping villa gardens to sculpted interior green walls — a complete suite of landscaping and interior design services for Dubai's most distinguished spaces.</p>
+    <p class="hero-desc">
+      {% if hero and hero.subtitle %}
+        {{ hero.subtitle }}
+      {% else %}
+        From sweeping villa gardens to sculpted interior green walls — a complete suite of landscaping and interior design services for Dubai's most distinguished spaces.
+      {% endif %}
+    </p>
+    {% if hero and hero.get_stats %}
+    <div class="hero-stats">
+      {% for stat in hero.get_stats %}
+      <div class="hs-item">
+        <div class="hs-num">{{ stat.number }}</div>
+        <div class="hs-label">{{ stat.label }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
     <div class="hero-stats">
       <div class="hs-item">
         <div class="hs-num">3+</div>
@@ -50,6 +72,7 @@
         <div class="hs-label">Satisfaction</div>
       </div>
     </div>
+    {% endif %}
   </div>
 
   <div class="hero-stripe"></div>

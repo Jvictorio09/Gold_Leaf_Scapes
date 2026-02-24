@@ -1,0 +1,73 @@
+<!-- ════ SHOWCASE ════ -->
+{% if showcase_services %}
+<section class="showcase">
+  <div class="reveal">
+    <div class="eyebrow"><span class="gold-line" style="width:48px;"></span> Featured Services</div>
+    <h2 class="section-title">Explore <em>More</em> Offerings</h2>
+  </div>
+  <div class="showcase-grid reveal">
+    {% for svc in showcase_services %}
+    <div class="sc-item {% if forloop.first %}large{% else %}half{% endif %}">
+      <div class="sc-bg bg{{ forloop.counter }}">
+        {% if svc.hero_image_url %}
+        <div style="position:absolute; inset:0; overflow:hidden;">
+          <img src="{{ svc.hero_image_url }}" alt="{{ svc.get_clean_title }}" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        {% else %}
+        <!-- SVG backgrounds fallback -->
+        <svg width="100%" height="100%" viewBox="0 0 800 460" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;opacity:0.6;">
+          <ellipse cx="650" cy="130" rx="160" ry="210" fill="rgba(72,104,48,0.6)"/>
+          <ellipse cx="615" cy="75" rx="110" ry="155" fill="rgba(96,132,68,0.55)"/>
+          <rect x="635" y="305" width="26" height="155" fill="rgba(120,85,45,0.5)"/>
+          <ellipse cx="130" cy="115" rx="120" ry="160" fill="rgba(80,112,55,0.55)"/>
+          <rect x="118" y="250" width="22" height="210" fill="rgba(120,85,45,0.45)"/>
+          <path d="M0 350 Q200 325 400 340 Q600 355 800 330 L800 460 L0 460Z" fill="rgba(88,120,60,0.45)"/>
+          <rect x="250" y="365" width="300" height="18" rx="4" fill="rgba(100,170,220,0.4)"/>
+          <circle cx="380" cy="338" r="11" fill="rgba(220,170,60,0.6)"/>
+          <circle cx="340" cy="348" r="8" fill="rgba(220,170,60,0.5)"/>
+        </svg>
+        {% endif %}
+      </div>
+      <div class="sc-overlay">
+        <div class="sc-tag">{{ svc.get_clean_title }}</div>
+        <div class="sc-name">{{ svc.short_description }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% elif service.get_showcase_projects %}
+<section class="showcase">
+  <div class="reveal">
+    <div class="eyebrow"><span class="gold-line" style="width:48px;"></span> Featured Projects</div>
+    <h2 class="section-title">Villa <em>Portfolio</em></h2>
+  </div>
+  <div class="showcase-grid reveal">
+    {% for project in service.get_showcase_projects %}
+    <div class="sc-item {{ project.size }}">
+      <div class="sc-bg bg{{ forloop.counter }}">
+        {% if project.image_url %}
+        <div style="position:absolute; inset:0; overflow:hidden;">
+          <img src="{{ project.image_url }}" alt="{{ project.name }}" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        {% else %}
+        <!-- SVG backgrounds are preserved as fallback -->
+        <svg width="100%" height="100%" viewBox="0 0 800 460" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;opacity:0.6;">
+          <ellipse cx="650" cy="130" rx="160" ry="210" fill="rgba(72,104,48,0.6)"/>
+          <ellipse cx="615" cy="75" rx="110" ry="155" fill="rgba(96,132,68,0.55)"/>
+          <rect x="635" y="305" width="26" height="155" fill="rgba(120,85,45,0.5)"/>
+          <ellipse cx="130" cy="115" rx="120" ry="160" fill="rgba(80,112,55,0.55)"/>
+          <rect x="118" y="250" width="22" height="210" fill="rgba(120,85,45,0.45)"/>
+          <path d="M0 350 Q200 325 400 340 Q600 355 800 330 L800 460 L0 460Z" fill="rgba(88,120,60,0.45)"/>
+          <rect x="250" y="365" width="300" height="18" rx="4" fill="rgba(100,170,220,0.4)"/>
+          <circle cx="380" cy="338" r="11" fill="rgba(220,170,60,0.6)"/>
+          <circle cx="340" cy="348" r="8" fill="rgba(220,170,60,0.5)"/>
+        </svg>
+        {% endif %}
+      </div>
+      <div class="sc-overlay"><div class="sc-tag">{{ project.tag }}</div><div class="sc-name">{{ project.name }}</div></div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

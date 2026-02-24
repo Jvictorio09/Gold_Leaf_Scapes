@@ -33,6 +33,11 @@
                    class="sidebar-link block px-4 py-2 rounded hover:bg-gray-700 {% if 'services' in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-briefcase mr-2"></i> Services
                 </a>
+                
+                <a href="{% url 'dashboard_projects_list' %}" 
+                   class="sidebar-link block px-4 py-2 rounded hover:bg-gray-700 {% if 'project' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-folder-open mr-2"></i> Projects
+                </a>
                 {% endif %}
                 
                 <a href="{% url 'dashboard_insights_list' %}" 
@@ -44,6 +49,11 @@
                 <a href="{% url 'dashboard_heroes_list' %}" 
                    class="sidebar-link block px-4 py-2 rounded hover:bg-gray-700 {% if 'hero' in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-image mr-2"></i> Heroes
+                </a>
+                
+                <a href="{% url 'dashboard_intro_settings' %}" 
+                   class="sidebar-link block px-4 py-2 rounded hover:bg-gray-700 {% if 'intro' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-palette mr-2"></i> Intro Settings
                 </a>
                 
                 <a href="{% url 'dashboard_metadata_list' %}" 
@@ -104,6 +114,234 @@
         </main>
     </div>
     
+    <!-- Gallery Modal -->
+    <div id="galleryModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b">
+                <h2 class="text-2xl font-bold text-gray-800">
+                    <i class="fas fa-images mr-2 text-purple-500"></i>Select Image from Gallery
+                </h2>
+                <button id="closeGalleryModal" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <div id="galleryLoading" class="text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-4xl text-purple-500 mb-4"></i>
+                    <p class="text-gray-600">Loading gallery...</p>
+                </div>
+                
+                <div id="galleryError" class="hidden text-center py-12">
+                    <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+                    <p class="text-red-600" id="galleryErrorText">Failed to load gallery</p>
+                    <button onclick="loadGallery()" class="mt-4 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded">
+                        <i class="fas fa-redo mr-2"></i>Retry
+                    </button>
+                </div>
+                
+                <div id="galleryGrid" class="hidden grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <!-- Images will be loaded here -->
+                </div>
+                
+                <div id="galleryEmpty" class="hidden text-center py-12">
+                    <i class="fas fa-image text-4xl text-gray-400 mb-4"></i>
+                    <p class="text-gray-600 mb-4">No images in gallery yet.</p>
+                    <a href="{% url 'dashboard_gallery' %}" class="inline-block bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded">
+                        <i class="fas fa-upload mr-2"></i>Upload Images
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="p-6 border-t bg-gray-50 flex justify-between items-center">
+                <p class="text-sm text-gray-600">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Click an image to select it, or <a href="{% url 'dashboard_gallery' %}" class="text-purple-600 hover:underline">upload new images</a>
+                </p>
+                <button id="cancelGalleryModal" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gallery Modal Management
+        let currentImageInput = null;
+        let galleryImages = [];
+
+        // Open gallery modal for a specific input field
+        function openGalleryModal(inputId) {
+            currentImageInput = document.getElementById(inputId);
+            if (!currentImageInput) {
+                console.error('Input field not found:', inputId);
+                return;
+            }
+            
+            document.getElementById('galleryModal').classList.remove('hidden');
+            loadGallery();
+        }
+
+        // Close gallery modal
+        function closeGalleryModal() {
+            document.getElementById('galleryModal').classList.add('hidden');
+            currentImageInput = null;
+        }
+
+        // Load gallery images
+        async function loadGallery() {
+            const loading = document.getElementById('galleryLoading');
+            const error = document.getElementById('galleryError');
+            const grid = document.getElementById('galleryGrid');
+            const empty = document.getElementById('galleryEmpty');
+            
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            grid.classList.add('hidden');
+            empty.classList.add('hidden');
+            
+            try {
+                const response = await fetch('{% url "gallery_api_list" %}');
+                const data = await response.json();
+                
+                if (data.success) {
+                    galleryImages = data.images;
+                    displayGalleryImages();
+                } else {
+                    showGalleryError(data.error || 'Failed to load gallery');
+                }
+            } catch (err) {
+                showGalleryError(err.message);
+            }
+        }
+
+        // Display gallery images
+        function displayGalleryImages() {
+            const loading = document.getElementById('galleryLoading');
+            const error = document.getElementById('galleryError');
+            const grid = document.getElementById('galleryGrid');
+            const empty = document.getElementById('galleryEmpty');
+            
+            loading.classList.add('hidden');
+            
+            if (galleryImages.length === 0) {
+                empty.classList.remove('hidden');
+                return;
+            }
+            
+            grid.classList.remove('hidden');
+            grid.innerHTML = '';
+            
+            galleryImages.forEach(image => {
+                const imageCard = document.createElement('div');
+                imageCard.className = 'relative group cursor-pointer border-2 border-transparent hover:border-purple-500 rounded-lg overflow-hidden transition-all';
+                imageCard.onclick = () => selectImage(image.web_url);
+                
+                imageCard.innerHTML = `
+                    <img src="${image.thumb_url}" alt="${image.title}" 
+                         class="w-full h-48 object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity flex items-center justify-center">
+                        <div class="text-white opacity-0 group-hover:opacity-100 transition-opacity text-center">
+                            <i class="fas fa-check-circle text-3xl mb-2"></i>
+                            <p class="text-sm font-semibold">Click to Select</p>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2">
+                        <p class="text-white text-xs truncate">${image.title}</p>
+                    </div>
+                `;
+                
+                grid.appendChild(imageCard);
+            });
+        }
+
+        // Show gallery error
+        function showGalleryError(message) {
+            const loading = document.getElementById('galleryLoading');
+            const error = document.getElementById('galleryError');
+            const errorText = document.getElementById('galleryErrorText');
+            
+            loading.classList.add('hidden');
+            error.classList.remove('hidden');
+            errorText.textContent = message;
+        }
+
+        // Select image and insert URL into input field
+        function selectImage(url) {
+            if (currentImageInput) {
+                currentImageInput.value = url;
+                currentImageInput.dispatchEvent(new Event('input', { bubbles: true }));
+                
+                // Show success message
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                notification.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Image URL inserted!';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 2000);
+                
+                closeGalleryModal();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('closeGalleryModal').addEventListener('click', closeGalleryModal);
+        document.getElementById('cancelGalleryModal').addEventListener('click', closeGalleryModal);
+        
+        // Close on backdrop click
+        document.getElementById('galleryModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeGalleryModal();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !document.getElementById('galleryModal').classList.contains('hidden')) {
+                closeGalleryModal();
+            }
+        });
+
+        // Auto-detect image URL inputs and add gallery buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find all image URL input fields
+            const imageInputs = document.querySelectorAll('input[type="url"][id*="image_url"], input[type="url"][id*="Image"], input[type="url"][placeholder*="cloudinary"]');
+            
+            imageInputs.forEach(input => {
+                // Check if button already exists
+                if (input.parentElement.querySelector('.gallery-btn')) {
+                    return;
+                }
+                
+                // Create wrapper if needed
+                let wrapper = input.parentElement;
+                if (!wrapper.classList.contains('relative')) {
+                    const newWrapper = document.createElement('div');
+                    newWrapper.className = 'relative';
+                    input.parentElement.insertBefore(newWrapper, input);
+                    newWrapper.appendChild(input);
+                    wrapper = newWrapper;
+                }
+                
+                // Add gallery button
+                const galleryBtn = document.createElement('button');
+                galleryBtn.type = 'button';
+                galleryBtn.className = 'gallery-btn absolute right-2 top-1/2 transform -translate-y-1/2 bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded text-sm';
+                galleryBtn.innerHTML = '<i class="fas fa-images mr-1"></i>Gallery';
+                galleryBtn.onclick = () => openGalleryModal(input.id);
+                wrapper.appendChild(galleryBtn);
+                
+                // Adjust input padding to make room for button
+                input.style.paddingRight = '100px';
+            });
+        });
+    </script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

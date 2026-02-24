@@ -218,11 +218,27 @@
       inset: 0;
       z-index: 0;
       pointer-events: none;
+      /* soft dark base behind everything */
       background:
-        linear-gradient(160deg, rgba(13,13,11,0.55) 0%, rgba(13,13,11,0.25) 40%, rgba(13,13,11,0.82) 100%),
-        radial-gradient(ellipse at 70% 30%, rgba(107,123,94,0.35) 0%, transparent 60%),
-        radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.12) 0%, transparent 50%);
-      background-color: #1c2218;
+        linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(10,10,10,0.75) 35%, rgba(15,15,15,0.6) 65%, rgba(20,20,20,0.4) 100%);
+      background-color: #050505;
+    }
+    /* Black overlay for hero section – fades softly left → right */
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.3) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    /* When background image is present, keep same left→right black gradient for readability */
+    .hero-bg[style*="background-image"] {
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.78) 40%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.35) 100%);
+    }
+    .hero-bg[style*="background-image"]::before {
+      background: linear-gradient(90deg, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.6) 75%, rgba(0,0,0,0.35) 100%);
     }
 
     /* Decorative leaf SVG pattern */
@@ -254,7 +270,7 @@
       font-size: 0.86rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: var(--gold);
+      color: #FFFFFF;
       font-weight: 400;
     }
 
@@ -268,7 +284,7 @@
     }
     .hero-title em {
       font-style: italic;
-      color: var(--gold-light);
+      color: #FFFFFF;
     }
 
     .hero-sub {
@@ -336,17 +352,17 @@
     .stat-item:last-child { border-right: none; }
     .stat-num {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 2.4rem;
-      font-weight: 300;
-      color: var(--gold-light);
+      font-size: 2.6rem;
+      font-weight: 400;
+      color: var(--gold);
       line-height: 1;
     }
     .stat-label {
-      font-size: 0.78rem;
-      letter-spacing: 0.22em;
+      font-size: 0.8rem;
+      letter-spacing: 0.24em;
       text-transform: uppercase;
-      color: rgba(247,243,236,0.5);
-      margin-top: 4px;
+      color: #FFFFFF;
+      margin-top: 6px;
     }
 
     /* ─── SECTION BASE ─── */
@@ -435,6 +451,14 @@
     .garden-svg {
       position: absolute;
       inset: 0;
+      z-index: 1;
+    }
+    .intro-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       z-index: 1;
     }
 
@@ -578,6 +602,26 @@
       cursor: pointer;
       transition: background 0.3s;
     }
+    .service-card--with-image {
+      background: transparent;
+    }
+    .service-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.02);
+      transition: transform 0.6s ease;
+    }
+    .service-card--with-image .service-card-inner {
+      position: relative;
+      z-index: 1;
+      padding: 48px 40px;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0.25) 90%, transparent 100%);
+    }
+    .service-card:hover .service-card-bg {
+      transform: scale(1.06);
+    }
     .service-card::before {
       content: '';
       position: absolute;
@@ -633,7 +677,7 @@
       font-size: 1.02rem;
       font-weight: 300;
       line-height: 1.7;
-      color: rgba(247,243,236,0.5);
+      color: #FFFFFF;
     }
 
     .service-link {
@@ -651,6 +695,87 @@
       transition: opacity 0.3s, transform 0.3s;
     }
     .service-card:hover .service-link { opacity: 1; transform: translateY(0); }
+
+    /* ─── SERVICES MASONRY (for homepage) ─── */
+    .services-section {
+      padding: 120px 80px;
+      background: var(--dark);
+    }
+    .services-masonry {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+    }
+    .svc-card {
+      grid-column: span 4;
+      position: relative;
+      min-height: 400px;
+      background: var(--dark);
+      border: 1px solid rgba(201,168,76,0.15);
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .svc-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(201,168,76,0.3);
+    }
+    .svc-card .card-inner {
+      position: relative;
+      height: 100%;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+    }
+    .svc-card .card-num {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem;
+      font-weight: 300;
+      color: rgba(201,168,76,0.2);
+      line-height: 1;
+    }
+    .svc-card .card-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 1.3rem;
+      margin-bottom: 24px;
+    }
+    .svc-card .card-title {
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--cream);
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .svc-card .card-desc {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: rgba(247,243,236,0.6);
+      margin-bottom: 24px;
+      flex-grow: 1;
+    }
+    .svc-card .card-link {
+      font-size: 0.82rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+    .svc-card .card-link:hover {
+      color: var(--gold-light);
+    }
 
     /* ─── PORTFOLIO ─── */
     #portfolio {
@@ -1611,15 +1736,222 @@
       }
       section { padding: 80px 24px; }
       .hero-content { padding: 0 24px 80px; }
-      #intro { grid-template-columns: 1fr; }
+      .hero-title { font-size: clamp(2.2rem, 5vw, 4rem); }
+      .hero-sub { font-size: 1rem; max-width: 100%; }
+      .hero-ctas { flex-direction: column; gap: 16px; }
+      .hero-ctas .btn-primary,
+      .hero-ctas .btn-ghost { width: 100%; text-align: center; }
+      .hero-stats { display: none; }
+      
+      #intro { grid-template-columns: 1fr; gap: 40px; }
       .intro-visual { height: 300px; }
+      .intro-body { padding: 0; }
+      .intro-body p { font-size: 1rem; }
+      .intro-features { margin-top: 32px; }
+      .feature-row { font-size: 0.95rem; }
+      
+      .contact-strip { 
+        padding: 20px 24px; 
+        flex-wrap: wrap; 
+        gap: 16px; 
+        justify-content: center;
+      }
+      .contact-item { font-size: 0.85rem; }
+      
+      .logos-section { padding: 80px 24px; }
+      .logo-item { min-width: 200px; }
+      .logo-image-wrapper { width: 200px; height: 120px; }
+      
+      .services-section { padding: 60px 24px 80px; }
+      .services-masonry { grid-template-columns: 1fr; gap: 20px; }
+      .svc-card { 
+        grid-column: span 1 !important; 
+        min-height: 320px;
+      }
+      .svc-card .card-inner { padding: 32px 24px; }
+      .svc-card .card-num { font-size: 3rem; top: 20px; right: 20px; }
+      .svc-card .card-icon-wrap { width: 48px; height: 48px; font-size: 1.1rem; margin-bottom: 20px; }
+      .svc-card .card-title { font-size: 1.2rem; margin-bottom: 12px; }
+      .svc-card .card-desc { font-size: 0.95rem; }
+      .services-header { grid-template-columns: 1fr; gap: 24px; }
       .services-grid { grid-template-columns: 1fr; }
-      .portfolio-header { padding: 0 24px; }
+      .service-card { padding: 32px 24px; }
+      .service-card-bg { transform: scale(1); }
+      .service-card--with-image .service-card-inner { padding: 32px 24px; }
+      
+      .portfolio-header { 
+        padding: 0 24px; 
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+      }
       .portfolio-scroll { padding: 0 24px; }
-      .portfolio-scroll .project-card { flex: 0 0 300px; height: 380px; }
-      .process-grid { grid-template-columns: 1fr 1fr; }
-      #cta { grid-template-columns: 1fr; text-align: center; }
+      .portfolio-scroll .project-card { flex: 0 0 280px; height: 360px; }
+      
+      .process-grid { grid-template-columns: 1fr 1fr; gap: 0; }
+      .process-step { padding: 32px 20px; }
+      .process-step::after { display: none; }
+      .step-num { font-size: 3.5rem; }
+      .step-title { font-size: 1.1rem; }
+      .step-desc { font-size: 0.9rem; }
+      
+      #testimonials { padding: 80px 24px; }
+      .testimonial-wrap { margin-top: 40px; padding: 0 16px; }
+      .quote-mark { font-size: 5rem; }
+      .testimonial-text { font-size: 1.3rem; line-height: 1.5; }
+      .testimonial-author { font-size: 0.8rem; }
+      .testimonial-role { font-size: 0.8rem; }
+      
+      #cta { 
+        grid-template-columns: 1fr; 
+        text-align: center; 
+        padding: 80px 24px;
+        gap: 32px;
+      }
+      .cta-title { font-size: clamp(1.8rem, 4vw, 2.8rem); }
       .cta-actions { align-items: center; }
+      .cta-phone { font-size: 1.2rem; }
+      
+      /* Projects */
+      .projects-hero { 
+        padding: 120px 24px 60px; 
+      }
+      .projects-hero-title { 
+        font-size: clamp(2.4rem, 5vw, 3.8rem); 
+        margin-bottom: 20px;
+      }
+      .projects-hero-desc { 
+        font-size: 1rem; 
+        line-height: 1.75;
+      }
+      .projects-filter-bar { 
+        padding: 0 24px; 
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .projects-filter-bar::-webkit-scrollbar { display: none; }
+      .projects-filter-bar .filter-btn { 
+        padding: 16px 20px; 
+        font-size: 0.78rem; 
+        white-space: nowrap;
+      }
+      .projects-catalog-section { 
+        padding: 60px 24px 80px; 
+      }
+      .projects-grid { 
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+        gap: 16px; 
+        margin-top: 32px;
+      }
+      .project-catalog-card { 
+        height: 420px; 
+      }
+      .project-catalog-overlay { 
+        padding: 28px 24px; 
+      }
+      .project-catalog-title { 
+        font-size: 1.5rem; 
+        margin-bottom: 6px;
+      }
+      .project-catalog-category { 
+        font-size: 0.88rem; 
+        margin-bottom: 10px;
+      }
+      .project-catalog-desc { 
+        font-size: 0.9rem; 
+        margin-bottom: 12px;
+      }
+      .project-catalog-link { 
+        font-size: 0.78rem; 
+      }
+      
+      /* Project Detail */
+      .project-hero { 
+        height: 70vh; 
+      }
+      .project-hero-content { 
+        padding: 0 24px 60px; 
+        grid-template-columns: 1fr; 
+        gap: 32px;
+      }
+      .project-hero-side { 
+        align-items: flex-start; 
+        width: 100%;
+      }
+      .project-hero-title { 
+        font-size: clamp(2.4rem, 6vw, 4rem); 
+      }
+      .project-hero-tag { 
+        font-size: 0.72rem; 
+        margin-bottom: 12px;
+      }
+      .project-hero-category { 
+        font-size: 0.88rem; 
+      }
+      .btn-primary { 
+        width: 100%; 
+        text-align: center; 
+      }
+      .hero-back { 
+        font-size: 0.78rem; 
+        margin-top: 8px;
+      }
+      .scroll-hint { 
+        display: none; 
+      }
+      
+      .project-overview { 
+        padding: 80px 24px; 
+        grid-template-columns: 1fr; 
+        gap: 48px;
+      }
+      .project-overview-text { 
+        max-width: 100%; 
+      }
+      .project-overview-body { 
+        font-size: 1.05rem; 
+        line-height: 1.8;
+      }
+      .project-overview-sidebar { 
+        padding: 36px 28px; 
+      }
+      .project-spec-item { 
+        flex-direction: column; 
+        gap: 8px;
+        padding-bottom: 16px;
+      }
+      .spec-value { 
+        text-align: left; 
+      }
+      
+      .project-gallery { 
+        padding: 80px 24px; 
+      }
+      .gallery-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 16px; 
+        margin-top: 40px;
+      }
+      
+      .related-projects { 
+        padding: 80px 24px; 
+      }
+      .related-projects-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 16px; 
+        margin-top: 40px;
+      }
+      .related-project-card { 
+        height: 360px; 
+      }
+      .related-project-overlay { 
+        padding: 24px 20px; 
+      }
+      .related-project-name { 
+        font-size: 1.4rem; 
+      }
+      
       footer { padding: 40px 24px 28px; }
       .footer-grid { grid-template-columns: 1fr; gap: 32px; }
       .footer-bottom {
@@ -1628,16 +1960,229 @@
         text-align: center;
       }
       .social-links { justify-content: center; }
-      .hero-stats { display: none; }
-      .contact-strip { padding: 20px 24px; flex-wrap: wrap; gap: 20px; }
-      .services-header { grid-template-columns: 1fr; }
-      .logos-section { padding: 80px 24px; }
-      .logo-item { min-width: 250px; }
-      .logo-image-wrapper { width: 250px; height: 150px; }
     }
     @media (max-width: 640px) {
+      nav { padding: 12px 20px; }
       .logo-text { font-size: 1.1rem; }
       .logo-image img { height: 32px; }
+      
+      section { padding: 60px 20px; }
+      .hero-content { padding: 0 20px 60px; }
+      .hero-title { font-size: clamp(1.8rem, 6vw, 3.2rem); margin-bottom: 20px; }
+      .hero-sub { font-size: 0.95rem; margin-bottom: 32px; }
+      .hero-ctas { gap: 12px; }
+      .btn-primary, .btn-ghost { font-size: 0.85rem; padding: 14px 28px; }
+      
+      #intro { padding: 60px 20px; gap: 32px; }
+      .intro-visual { height: 240px; }
+      .intro-body p { font-size: 0.95rem; line-height: 1.7; }
+      .intro-features { gap: 12px; margin-top: 24px; }
+      .feature-row { font-size: 0.9rem; }
+      
+      .contact-strip { 
+        padding: 16px 20px; 
+        gap: 12px;
+        flex-direction: column;
+        align-items: center;
+      }
+      .contact-item { font-size: 0.8rem; }
+      
+      .logos-section { padding: 60px 20px; }
+      .logo-item { min-width: 180px; }
+      .logo-image-wrapper { width: 180px; height: 100px; }
+      
+      .services-section { padding: 60px 20px 80px; }
+      .services-masonry { gap: 16px; }
+      .svc-card { min-height: 300px; }
+      .svc-card .card-inner { padding: 24px 20px; }
+      .svc-card .card-num { font-size: 2.5rem; top: 16px; right: 16px; }
+      .svc-card .card-icon-wrap { width: 44px; height: 44px; font-size: 1rem; margin-bottom: 16px; }
+      .svc-card .card-title { font-size: 1.1rem; margin-bottom: 10px; }
+      .svc-card .card-desc { font-size: 0.9rem; }
+      .svc-card .card-link { font-size: 0.75rem; }
+      .service-card { padding: 24px 20px; }
+      .service-card--with-image .service-card-inner { padding: 24px 20px; }
+      .service-num { font-size: 3rem; top: 16px; right: 20px; }
+      .service-icon { width: 44px; height: 44px; font-size: 1rem; margin-bottom: 20px; }
+      .service-title { font-size: 1.2rem; margin-bottom: 12px; }
+      .service-desc { font-size: 0.95rem; }
+      
+      /* Projects */
+      .projects-hero { 
+        padding: 100px 20px 48px; 
+      }
+      .projects-hero-title { 
+        font-size: clamp(2rem, 6vw, 3.2rem); 
+        margin-bottom: 16px;
+      }
+      .projects-hero-desc { 
+        font-size: 0.95rem; 
+        line-height: 1.7;
+      }
+      .projects-filter-bar { 
+        padding: 0 20px; 
+        top: 60px;
+      }
+      .projects-filter-bar .filter-btn { 
+        padding: 14px 16px; 
+        font-size: 0.72rem;
+      }
+      .projects-filter-bar .filter-count { 
+        width: 18px; 
+        height: 18px; 
+        font-size: 0.55rem;
+      }
+      .projects-catalog-section { 
+        padding: 48px 20px 64px; 
+      }
+      .projects-grid { 
+        grid-template-columns: 1fr; 
+        gap: 16px; 
+        margin-top: 24px;
+      }
+      .project-catalog-card { 
+        height: 380px; 
+      }
+      .project-catalog-overlay { 
+        padding: 24px 20px; 
+      }
+      .project-catalog-tag { 
+        font-size: 0.72rem; 
+        margin-bottom: 10px;
+      }
+      .project-catalog-title { 
+        font-size: 1.3rem; 
+        margin-bottom: 6px;
+      }
+      .project-catalog-category { 
+        font-size: 0.85rem; 
+        margin-bottom: 8px;
+      }
+      .project-catalog-desc { 
+        font-size: 0.88rem; 
+        line-height: 1.6;
+        margin-bottom: 10px;
+      }
+      .project-catalog-link { 
+        font-size: 0.75rem; 
+      }
+      
+      /* Project Detail */
+      .project-hero { 
+        height: 60vh; 
+      }
+      .project-hero-content { 
+        padding: 0 20px 48px; 
+        gap: 24px;
+      }
+      .project-hero-title { 
+        font-size: clamp(2rem, 7vw, 3.2rem); 
+        margin-bottom: 10px;
+      }
+      .project-hero-tag { 
+        font-size: 0.68rem; 
+        margin-bottom: 10px;
+      }
+      .project-hero-category { 
+        font-size: 0.85rem; 
+      }
+      .breadcrumb { 
+        font-size: 0.75rem; 
+        margin-bottom: 16px;
+      }
+      .btn-primary { 
+        font-size: 0.82rem; 
+        padding: 14px 28px;
+      }
+      .hero-back { 
+        font-size: 0.75rem; 
+      }
+      
+      .project-overview { 
+        padding: 60px 20px; 
+        gap: 36px;
+      }
+      .project-overview-body { 
+        font-size: 1rem; 
+        line-height: 1.75;
+      }
+      .project-overview-sidebar { 
+        padding: 32px 24px; 
+      }
+      .project-spec-item { 
+        padding-bottom: 14px;
+      }
+      .spec-key { 
+        font-size: 0.85rem; 
+      }
+      .spec-value { 
+        font-size: 0.85rem; 
+      }
+      
+      .project-gallery { 
+        padding: 60px 20px; 
+      }
+      .gallery-grid { 
+        grid-template-columns: 1fr; 
+        gap: 12px; 
+        margin-top: 32px;
+      }
+      .gallery-item { 
+        aspect-ratio: 4/3; 
+      }
+      
+      .related-projects { 
+        padding: 60px 20px; 
+      }
+      .related-projects-grid { 
+        grid-template-columns: 1fr; 
+        gap: 16px; 
+        margin-top: 32px;
+      }
+      .related-project-card { 
+        height: 340px; 
+      }
+      .related-project-overlay { 
+        padding: 20px 16px; 
+      }
+      .related-project-tag { 
+        font-size: 0.72rem; 
+        margin-bottom: 6px;
+      }
+      .related-project-name { 
+        font-size: 1.2rem; 
+        margin-bottom: 4px;
+      }
+      .related-project-category { 
+        font-size: 0.88rem; 
+      }
+      
+      .portfolio-header { padding: 0 20px; padding-top: 80px; }
+      .portfolio-scroll { padding: 0 20px; }
+      .portfolio-scroll .project-card { flex: 0 0 260px; height: 340px; }
+      .project-overlay { padding: 24px 20px; }
+      .project-name { font-size: 1.4rem; }
+      
+      .process-grid { grid-template-columns: 1fr; }
+      .process-step { padding: 28px 20px; border-right: none; border-bottom: 1px solid rgba(201,168,76,0.12); }
+      .process-step:last-child { border-bottom: none; }
+      .step-num { font-size: 3rem; margin-bottom: 16px; }
+      .step-title { font-size: 1rem; margin-bottom: 10px; }
+      .step-desc { font-size: 0.85rem; }
+      
+      #testimonials { padding: 60px 20px; }
+      .testimonial-wrap { margin-top: 32px; padding: 0; }
+      .quote-mark { font-size: 4rem; margin-bottom: 16px; }
+      .testimonial-text { font-size: 1.15rem; line-height: 1.5; margin-bottom: 24px; }
+      .testimonial-author { font-size: 0.75rem; }
+      .testimonial-role { font-size: 0.75rem; }
+      .testimonial-nav { margin-top: 32px; }
+      
+      #cta { padding: 60px 20px; gap: 24px; }
+      .cta-title { font-size: clamp(1.6rem, 5vw, 2.4rem); }
+      .cta-phone { font-size: 1.1rem; }
+      .btn-primary { font-size: 0.85rem; padding: 14px 28px; }
+      
       .mobile-menu-container {
         padding: 32px 24px 60px;
       }

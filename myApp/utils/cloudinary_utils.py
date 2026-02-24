@@ -1,5 +1,6 @@
 """
 Cloudinary utility functions for image upload and compression.
+All images are converted to WebP format before upload for optimal performance.
 Handles WebP conversion, compression, and Cloudinary upload with multiple URL variants.
 """
 import io
@@ -17,21 +18,22 @@ TARGET_BYTES = int(MAX_BYTES * 0.93)  # 9.3MB target (safety margin)
 
 def smart_compress_to_bytes(src_file) -> bytes:
     """
-    Accepts a file-like object or path; returns compressed bytes <= TARGET_BYTES.
+    Accepts a file-like object or path; returns compressed WebP bytes <= TARGET_BYTES.
     
     Process:
     1. Load image with PIL/Pillow
     2. Auto-rotate based on EXIF data
-    3. Determine optimal format (WebP for PNG/TIFF, JPEG for photos)
+    3. Convert to RGB if needed (WebP supports RGBA, but convert non-alpha images to RGB for better compression)
     4. Resize if width > 5000px
-    5. Iteratively reduce quality until under TARGET_BYTES
-    6. Return compressed bytes
+    5. Convert to WebP format
+    6. Iteratively reduce quality until under TARGET_BYTES
+    7. Return compressed WebP bytes
     
     Args:
         src_file: File-like object (request.FILES['file']) or file path (str/Path)
     
     Returns:
-        bytes: Compressed image data ready for upload
+        bytes: Compressed WebP image data ready for upload
     """
     # Load into Pillow
     if isinstance(src_file, (str, Path)):
@@ -43,10 +45,16 @@ def smart_compress_to_bytes(src_file) -> bytes:
         # Step 1: Auto-rotate based on EXIF orientation
         im = ImageOps.exif_transpose(im)
         
-        # Step 2: Determine optimal output format
-        fmt = (im.format or "JPEG").upper()
-        prefer_webp = fmt in ("PNG", "TIFF")  # PNG/TIFF → WebP (better compression)
-        out_fmt = "WEBP" if prefer_webp else ("JPEG" if fmt != "WEBP" else "WEBP")
+        # Step 2: Convert to RGBA if image has transparency, otherwise RGB
+        # WebP supports both, but RGB is smaller for images without transparency
+        if im.mode in ('RGBA', 'LA', 'P'):
+            # Keep transparency if present
+            if im.mode == 'P':
+                im = im.convert('RGBA')
+            # Already RGBA or LA, keep as is
+        elif im.mode not in ('RGB', 'L'):
+            # Convert other modes to RGB
+            im = im.convert('RGB')
         
         # Step 3: Cap extreme dimensions (resize if too large)
         max_w = 5000
@@ -56,32 +64,22 @@ def smart_compress_to_bytes(src_file) -> bytes:
                 Image.LANCZOS  # High-quality resampling
             )
         
-        # Step 4: Iterative quality reduction
-        q = 82  # Start with high quality
-        min_q = 50 if out_fmt == "JPEG" else 45  # Minimum quality thresholds
-        step = 4  # Quality reduction step
+        # Step 4: Iterative quality reduction (always WebP)
+        q = 85  # Start with high quality for WebP
+        min_q = 40  # Minimum quality for WebP
+        step = 5  # Quality reduction step
         
         while True:
             buf = io.BytesIO()
             
-            if out_fmt == "JPEG":
-                # JPEG settings: progressive, optimized, chroma subsampling
-                im.save(
-                    buf, 
-                    format="JPEG", 
-                    quality=q, 
-                    optimize=True, 
-                    progressive=True, 
-                    subsampling="4:2:0"
-                )
-            else:
-                # WebP settings: method 6 (best compression)
-                im.save(
-                    buf, 
-                    format="WEBP", 
-                    quality=q, 
-                    method=6
-                )
+            # Always save as WebP with best compression method
+            im.save(
+                buf, 
+                format="WEBP", 
+                quality=q, 
+                method=6,  # Best compression (slower but smaller files)
+                lossless=False  # Use lossy compression for smaller files
+            )
             
             data = buf.getvalue()
             

@@ -179,9 +179,13 @@ class Service(models.Model):
         for project in self.showcase_projects_data.split(','):
             if '|' in project:
                 parts = project.split('|')
+                # Support both old (tag|name|size) and new (tag|name|size|image_url) formats
                 if len(parts) >= 2:
-                    size = parts[2].strip() if len(parts) > 2 else 'half'
-                    projects.append({'tag': parts[0].strip(), 'name': parts[1].strip(), 'size': size})
+                    tag = parts[0].strip()
+                    name = parts[1].strip()
+                    size = parts[2].strip() if len(parts) > 2 and parts[2].strip() else 'half'
+                    image_url = parts[3].strip() if len(parts) > 3 and parts[3].strip() else ''
+                    projects.append({'tag': tag, 'name': name, 'size': size, 'image_url': image_url})
         return projects
     
     def get_specs(self):
@@ -521,3 +525,28 @@ class Project(models.Model):
         if not self.gallery_images:
             return []
         return [url.strip() for url in self.gallery_images.split(',') if url.strip()]
+
+
+class IntroSettings(models.Model):
+    """Settings for the intro section on the home page (singleton)"""
+    intro_image_url = models.URLField(blank=True, help_text="Cloudinary URL for intro section image (replaces SVG)")
+    use_svg_fallback = models.BooleanField(default=True, help_text="Use SVG illustration if no image URL is provided")
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Intro Settings"
+        verbose_name_plural = "Intro Settings"
+    
+    def __str__(self):
+        return "Intro Section Settings"
+    
+    def save(self, *args, **kwargs):
+        # Ensure only one instance exists (singleton pattern)
+        self.pk = 1
+        super().save(*args, **kwargs)
+    
+    @classmethod
+    def get_settings(cls):
+        """Get or create the singleton instance"""
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj

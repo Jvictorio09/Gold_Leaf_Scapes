@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     UserProfile, Service, Insight, Hero, Metadata,
-    MediaAsset, MediaAlbum, ProcessStep, Project
+    MediaAsset, MediaAlbum, ProcessStep, Project, IntroSettings
 )
 
 
@@ -70,3 +70,17 @@ class ProjectAdmin(admin.ModelAdmin):
     list_filter = ['featured', 'related_service', 'created_at']
     search_fields = ['title', 'location', 'category', 'short_description']
     prepopulated_fields = {'slug': ('title',)}
+
+
+@admin.register(IntroSettings)
+class IntroSettingsAdmin(admin.ModelAdmin):
+    list_display = ['__str__', 'use_svg_fallback', 'updated_at']
+    fields = ['intro_image_url', 'use_svg_fallback']
+    
+    def has_add_permission(self, request):
+        # Only allow one instance (singleton)
+        return not IntroSettings.objects.exists()
+    
+    def has_delete_permission(self, request, obj=None):
+        # Don't allow deletion
+        return False

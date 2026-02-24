@@ -11,20 +11,45 @@
 <!-- Upload Section -->
 <div class="bg-white rounded-lg shadow p-6 mb-6">
     <h2 class="text-xl font-bold text-gray-800 mb-4">Upload Images</h2>
+    
+    <!-- Drag and Drop Zone -->
+    <div id="dropZone" class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center mb-4 transition-colors hover:border-purple-400 hover:bg-purple-50">
+        <div id="dropZoneContent">
+            <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+            <p class="text-lg font-semibold text-gray-700 mb-2">Drag and drop images here</p>
+            <p class="text-sm text-gray-500 mb-4">or</p>
+            <label for="fileInput" class="inline-block bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-6 rounded cursor-pointer transition-colors">
+                <i class="fas fa-folder-open mr-2"></i>Browse Files
+            </label>
+            <p class="text-xs text-gray-500 mt-4">All images will be automatically converted to WebP format. Large images will be compressed.</p>
+        </div>
+        <div id="dropZoneActive" class="hidden">
+            <i class="fas fa-file-upload text-5xl text-purple-500 mb-4"></i>
+            <p class="text-lg font-semibold text-purple-600">Drop images here to upload</p>
+        </div>
+    </div>
+    
+    <!-- File Input (hidden, triggered by label) -->
     <form id="uploadForm" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="mb-4">
-            <label for="fileInput" class="block text-gray-700 text-sm font-bold mb-2">Select Images</label>
-            <input type="file" id="fileInput" name="files" multiple accept="image/*" 
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            <p class="text-xs text-gray-500 mt-1">You can select multiple images. Large images will be automatically compressed.</p>
+        <input type="file" id="fileInput" name="files" multiple accept="image/*" 
+               class="hidden">
+        
+        <!-- Selected Files Preview -->
+        <div id="filePreview" class="mb-4 hidden">
+            <h3 class="text-sm font-semibold text-gray-700 mb-2">Selected Files:</h3>
+            <div id="fileList" class="space-y-2 max-h-48 overflow-y-auto"></div>
         </div>
-        <button type="submit" id="uploadBtn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
+        
+        <button type="submit" id="uploadBtn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed" disabled>
             <i class="fas fa-upload mr-2"></i>Upload Images
+        </button>
+        <button type="button" id="clearBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded ml-2 hidden">
+            <i class="fas fa-times mr-2"></i>Clear
         </button>
         <div id="uploadProgress" class="mt-4 hidden">
             <div class="bg-gray-200 rounded-full h-2.5">
-                <div id="progressBar" class="bg-purple-600 h-2.5 rounded-full" style="width: 0%"></div>
+                <div id="progressBar" class="bg-purple-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
             </div>
             <p id="progressText" class="text-sm text-gray-600 mt-2"></p>
         </div>
@@ -82,24 +107,173 @@
 
 {% block extra_js %}
 <script>
-    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+    const dropZone = document.getElementById('dropZone');
+    const dropZoneContent = document.getElementById('dropZoneContent');
+    const dropZoneActive = document.getElementById('dropZoneActive');
+    const fileInput = document.getElementById('fileInput');
+    const uploadForm = document.getElementById('uploadForm');
+    const filePreview = document.getElementById('filePreview');
+    const fileList = document.getElementById('fileList');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    
+    let selectedFiles = [];
+    
+    // Drag and Drop Handlers
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('border-purple-500', 'bg-purple-50');
+        dropZoneContent.classList.add('hidden');
+        dropZoneActive.classList.remove('hidden');
+    });
+    
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('border-purple-500', 'bg-purple-50');
+        dropZoneContent.classList.remove('hidden');
+        dropZoneActive.classList.add('hidden');
+    });
+    
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('border-purple-500', 'bg-purple-50');
+        dropZoneContent.classList.remove('hidden');
+        dropZoneActive.classList.add('hidden');
+        
+        const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+        if (files.length > 0) {
+            handleFiles(files);
+        }
+    });
+    
+    // File Input Handler
+    fileInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            handleFiles(files);
+        }
+    });
+    
+    // Handle Selected Files
+    function handleFiles(files) {
+        selectedFiles = files;
+        updateFilePreview();
+        updateUploadButton();
+    }
+    
+    // Update File Preview
+    function updateFilePreview() {
+        if (selectedFiles.length === 0) {
+            filePreview.classList.add('hidden');
+            fileList.innerHTML = '';
+            return;
+        }
+        
+        filePreview.classList.remove('hidden');
+        fileList.innerHTML = '';
+        
+        selectedFiles.forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'flex items-center justify-between p-2 bg-gray-50 rounded';
+            
+            const fileInfo = document.createElement('div');
+            fileInfo.className = 'flex items-center gap-3 flex-1';
+            
+            // File icon
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-image text-purple-500';
+            
+            // File name and size
+            const fileDetails = document.createElement('div');
+            fileDetails.className = 'flex-1 min-w-0';
+            const fileName = document.createElement('p');
+            fileName.className = 'text-sm font-medium text-gray-700 truncate';
+            fileName.textContent = file.name;
+            const fileSize = document.createElement('p');
+            fileSize.className = 'text-xs text-gray-500';
+            fileSize.textContent = formatFileSize(file.size);
+            fileDetails.appendChild(fileName);
+            fileDetails.appendChild(fileSize);
+            
+            // Remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'text-red-500 hover:text-red-700 ml-2';
+            removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            removeBtn.onclick = () => {
+                selectedFiles.splice(index, 1);
+                updateFileInput();
+                updateFilePreview();
+                updateUploadButton();
+            };
+            
+            fileInfo.appendChild(icon);
+            fileInfo.appendChild(fileDetails);
+            fileItem.appendChild(fileInfo);
+            fileItem.appendChild(removeBtn);
+            fileList.appendChild(fileItem);
+        });
+    }
+    
+    // Update File Input
+    function updateFileInput() {
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach(file => dataTransfer.items.add(file));
+        fileInput.files = dataTransfer.files;
+    }
+    
+    // Update Upload Button
+    function updateUploadButton() {
+        if (selectedFiles.length > 0) {
+            uploadBtn.disabled = false;
+            clearBtn.classList.remove('hidden');
+        } else {
+            uploadBtn.disabled = true;
+            clearBtn.classList.add('hidden');
+        }
+    }
+    
+    // Format File Size
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+    
+    // Clear Button
+    clearBtn.addEventListener('click', () => {
+        selectedFiles = [];
+        fileInput.value = '';
+        updateFilePreview();
+        updateUploadButton();
+    });
+    
+    // Form Submit Handler
+    uploadForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        const formData = new FormData(this);
-        const fileInput = document.getElementById('fileInput');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const uploadProgress = document.getElementById('uploadProgress');
-        const progressBar = document.getElementById('progressBar');
-        const progressText = document.getElementById('progressText');
-        
-        if (!fileInput.files.length) {
+        if (selectedFiles.length === 0) {
             alert('Please select at least one image');
             return;
         }
         
+        // Update file input before submit
+        updateFileInput();
+        
+        const formData = new FormData(this);
         uploadBtn.disabled = true;
         uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Uploading...';
         uploadProgress.classList.remove('hidden');
+        progressBar.style.width = '0%';
+        progressText.textContent = `Uploading ${selectedFiles.length} image(s)...`;
         
         try {
             const response = await fetch('{% url "gallery_api_upload" %}', {
@@ -114,7 +288,7 @@
             
             if (data.success) {
                 progressBar.style.width = '100%';
-                progressText.textContent = `Successfully uploaded ${data.images.length} image(s)!`;
+                progressText.textContent = `Successfully uploaded ${data.images.length} image(s)! All images converted to WebP format.`;
                 setTimeout(() => {
                     location.reload();
                 }, 1500);

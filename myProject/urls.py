@@ -33,6 +33,12 @@ urlpatterns = [
     path('dashboard/insights/<int:pk>/edit/', views.dashboard_insight_edit, name='dashboard_insight_edit'),
     path('dashboard/insights/<int:pk>/delete/', views.dashboard_insight_delete, name='dashboard_insight_delete'),
     
+    # Projects management
+    path('dashboard/projects/', views.dashboard_projects_list, name='dashboard_projects_list'),
+    path('dashboard/projects/create/', views.dashboard_project_create, name='dashboard_project_create'),
+    path('dashboard/projects/<int:pk>/edit/', views.dashboard_project_edit, name='dashboard_project_edit'),
+    path('dashboard/projects/<int:pk>/delete/', views.dashboard_project_delete, name='dashboard_project_delete'),
+    
     # Heroes management
     path('dashboard/heroes/', views.dashboard_heroes_list, name='dashboard_heroes_list'),
     path('dashboard/heroes/create/', views.dashboard_hero_create, name='dashboard_hero_create'),
@@ -45,8 +51,12 @@ urlpatterns = [
     path('dashboard/metadata/<int:pk>/edit/', views.dashboard_metadata_edit, name='dashboard_metadata_edit'),
     path('dashboard/metadata/<int:pk>/delete/', views.dashboard_metadata_delete, name='dashboard_metadata_delete'),
     
+    # Intro settings
+    path('dashboard/intro-settings/', views.dashboard_intro_settings, name='dashboard_intro_settings'),
+    
     # Gallery management
     path('dashboard/gallery/', views.dashboard_gallery, name='dashboard_gallery'),
+    path('dashboard/gallery/api/list/', views.gallery_api_list, name='gallery_api_list'),
     path('dashboard/gallery/upload/', views.gallery_api_upload, name='gallery_api_upload'),
     path('dashboard/gallery/<int:pk>/delete/', views.gallery_api_delete, name='gallery_api_delete'),
     

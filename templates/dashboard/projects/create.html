@@ -1,0 +1,111 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Create Project - Dashboard{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Create New Project</h1>
+    <a href="{% url 'dashboard_projects_list' %}" class="text-green-600 hover:underline mt-2 inline-block">
+        <i class="fas fa-arrow-left mr-2"></i>Back to Projects
+    </a>
+</div>
+
+<div class="bg-white rounded-lg shadow p-6">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-4">
+            <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title *</label>
+            <input type="text" name="title" id="title" required
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="e.g., The Verdant Villa">
+            <p class="text-xs text-gray-500 mt-1">HTML allowed (e.g., The <em>Verdant</em> Villa)</p>
+        </div>
+        
+        <div class="mb-4">
+            <label for="location" class="block text-gray-700 text-sm font-bold mb-2">Location *</label>
+            <input type="text" name="location" id="location" required
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="e.g., Dubai Hills Estate">
+        </div>
+        
+        <div class="mb-4">
+            <label for="category" class="block text-gray-700 text-sm font-bold mb-2">Category</label>
+            <input type="text" name="category" id="category"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="e.g., Villa Landscaping + Pool">
+        </div>
+        
+        <div class="mb-4">
+            <label for="hero_image_url" class="block text-gray-700 text-sm font-bold mb-2">Hero Image URL (Cloudinary)</label>
+            <input type="url" name="hero_image_url" id="hero_image_url"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="https://res.cloudinary.com/...">
+            <p class="text-xs text-gray-500 mt-1">Upload images via Gallery and paste the URL here</p>
+        </div>
+        
+        <div class="mb-4">
+            <label for="short_description" class="block text-gray-700 text-sm font-bold mb-2">Short Description</label>
+            <textarea name="short_description" id="short_description" rows="3"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      placeholder="Brief description for portfolio cards"></textarea>
+        </div>
+        
+        <div class="mb-4">
+            <label for="full_description" class="block text-gray-700 text-sm font-bold mb-2">Full Description</label>
+            <textarea name="full_description" id="full_description" rows="8"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      placeholder="Full project description"></textarea>
+            <p class="text-xs text-gray-500 mt-1">HTML allowed</p>
+        </div>
+        
+        <div class="mb-4">
+            <label for="specs_data" class="block text-gray-700 text-sm font-bold mb-2">Project Specifications</label>
+            <input type="text" name="specs_data" id="specs_data"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="Area|500 sqm,Completion|2024,Style|Tropical Modern">
+            <p class="text-xs text-gray-500 mt-1">Format: key|value,key|value (comma-separated)</p>
+        </div>
+        
+        <div class="mb-4">
+            <label for="gallery_images" class="block text-gray-700 text-sm font-bold mb-2">Gallery Images (Cloudinary URLs)</label>
+            <textarea name="gallery_images" id="gallery_images" rows="3"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      placeholder="https://res.cloudinary.com/..., https://res.cloudinary.com/..."></textarea>
+            <p class="text-xs text-gray-500 mt-1">Comma-separated Cloudinary URLs. Upload via Gallery and paste URLs here.</p>
+        </div>
+        
+        <div class="mb-4">
+            <label for="related_service" class="block text-gray-700 text-sm font-bold mb-2">Related Service (Optional)</label>
+            <select name="related_service" id="related_service"
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="">None</option>
+                {% for service in services %}
+                <option value="{{ service.id }}">{{ service.title|striptags }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="mb-4 flex items-center">
+            <input type="checkbox" name="featured" id="featured" class="mr-2">
+            <label for="featured" class="text-gray-700 text-sm font-bold">Featured Project (Show on homepage)</label>
+        </div>
+        
+        <div class="mb-4">
+            <label for="order" class="block text-gray-700 text-sm font-bold mb-2">Display Order</label>
+            <input type="number" name="order" id="order" value="0"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        
+        <div class="flex gap-4">
+            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                <i class="fas fa-save mr-2"></i>Create Project
+            </button>
+            <a href="{% url 'dashboard_projects_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

@@ -1,7 +1,7 @@
 <!-- ═══════════════ HERO ═══════════════ -->
 {% load static %}
-<section id="hero" {% if hero.background_image_url %}style="background-image: url('{{ hero.background_image_url }}'); background-size: cover; background-position: center;"{% endif %}>
-  <div class="hero-bg">
+<section id="hero">
+  <div class="hero-bg" {% if hero.background_image_url %}style="background-image: url('{{ hero.background_image_url }}'); background-size: cover; background-position: center;"{% endif %}>
     <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" style="opacity:0.12">
       <defs>
         <radialGradient id="rg1" cx="70%" cy="25%">

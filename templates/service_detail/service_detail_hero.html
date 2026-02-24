@@ -1,5 +1,5 @@
 <!-- ════ HERO ════ -->
-<div class="detail-hero">
+<div class="detail-hero"{% if service.hero_image_url %} style="background-image:url('{{ service.hero_image_url }}'); background-size:cover; background-position:center;"{% endif %}>
   <div class="hero-pattern"></div>
 
   <!-- Daytime garden illustration — bright, airy -->

@@ -15,14 +15,19 @@
 
   <div class="services-grid reveal">
     {% for service in services %}
-    <div class="service-card">
-      <div class="service-num">{{ forloop.counter|stringformat:"02d" }}</div>
-      {% if service.icon %}
-      <div class="service-icon"><i class="fas {{ service.icon }}"></i></div>
+    <div class="service-card{% if service.hero_image_url %} service-card--with-image{% endif %}">
+      {% if service.hero_image_url %}
+      <div class="service-card-bg" style="background-image: url('{{ service.hero_image_url }}');"></div>
       {% endif %}
-      <h3 class="service-title">{{ service.title|safe }}</h3>
-      <p class="service-desc">{{ service.short_description }}</p>
-      <a href="{{ service.get_absolute_url }}" class="service-link">Explore <i class="fas fa-arrow-right"></i></a>
+      <div class="service-card-inner">
+        <div class="service-num">{{ forloop.counter|stringformat:"02d" }}</div>
+        {% if service.icon %}
+        <div class="service-icon"><i class="fas {{ service.icon }}"></i></div>
+        {% endif %}
+        <h3 class="service-title">{{ service.title|safe }}</h3>
+        <p class="service-desc">{{ service.short_description }}</p>
+        <a href="{{ service.get_absolute_url }}" class="service-link">Explore <i class="fas fa-arrow-right"></i></a>
+      </div>
     </div>
     {% empty %}
     <div class="service-card">

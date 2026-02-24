@@ -13,7 +13,7 @@ import json
 
 from .models import (
     UserProfile, Service, Insight, Hero, Metadata, 
-    MediaAsset, MediaAlbum, ProcessStep, Project
+    MediaAsset, MediaAlbum, ProcessStep, Project, IntroSettings
 )
 from .decorators import admin_required, blog_author_required
 from .utils.cloudinary_utils import (
@@ -35,14 +35,21 @@ def home(request):
     # Get featured projects for the portfolio section
     projects = Project.objects.filter(featured=True).order_by('order', '-created_at')[:4]
     
+    # Get intro settings
+    intro_settings = IntroSettings.get_settings()
+    
     context = {
         'hero': hero,
         'services': services,
         'projects': projects,
+        'intro_settings': intro_settings,
     }
     return render(request, 'index.html', context)
 
 def services(request):
+    # Get hero for services page
+    hero = Hero.objects.filter(page='services', active=True).order_by('order').first()
+
     services_list = Service.objects.filter(featured=True).order_by('order', 'title')
     if not services_list.exists():
         services_list = Service.objects.all().order_by('order', 'title')
@@ -51,13 +58,19 @@ def services(request):
     process_steps = ProcessStep.objects.filter(active=True).order_by('order')
     
     return render(request, 'services.html', {
+        'hero': hero,
         'services': services_list,
         'process_steps': process_steps,
     })
 
 def service_detail(request, slug):
     service = get_object_or_404(Service, slug=slug)
-    return render(request, 'service_detail.html', {'service': service})
+    # Use other services (with hero images) to power the showcase tiles
+    showcase_services = Service.objects.filter(featured=True).exclude(id=service.id).order_by('order', 'title')[:4]
+    return render(request, 'service_detail.html', {
+        'service': service,
+        'showcase_services': showcase_services,
+    })
 
 def projects(request):
     """Projects catalog page"""
@@ -451,6 +464,88 @@ def dashboard_hero_delete(request, pk):
     return redirect('dashboard_heroes_list')
 
 
+# ==================== PROJECTS MANAGEMENT ====================
+
+@login_required
+@admin_required
+def dashboard_projects_list(request):
+    """List all projects"""
+    projects = Project.objects.all().order_by('-featured', 'order', '-created_at')
+    return render(request, 'dashboard/projects/list.html', {'projects': projects})
+
+
+@login_required
+@admin_required
+def dashboard_project_create(request):
+    """Create new project"""
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        location = request.POST.get('location', '')
+        category = request.POST.get('category', '')
+        hero_image_url = request.POST.get('hero_image_url', '')
+        short_description = request.POST.get('short_description', '')
+        full_description = request.POST.get('full_description', '')
+        specs_data = request.POST.get('specs_data', '')
+        gallery_images = request.POST.get('gallery_images', '')
+        related_service_id = request.POST.get('related_service', '')
+        featured = request.POST.get('featured') == 'on'
+        order = int(request.POST.get('order', 0))
+        
+        project = Project.objects.create(
+            title=title,
+            location=location,
+            category=category,
+            hero_image_url=hero_image_url,
+            short_description=short_description,
+            full_description=full_description,
+            specs_data=specs_data,
+            gallery_images=gallery_images,
+            related_service_id=related_service_id if related_service_id else None,
+            featured=featured,
+            order=order
+        )
+        return redirect('dashboard_projects_list')
+    
+    services = Service.objects.all().order_by('title')
+    return render(request, 'dashboard/projects/create.html', {'services': services})
+
+
+@login_required
+@admin_required
+def dashboard_project_edit(request, pk):
+    """Edit existing project"""
+    project = get_object_or_404(Project, pk=pk)
+    
+    if request.method == 'POST':
+        project.title = request.POST.get('title')
+        project.location = request.POST.get('location', '')
+        project.category = request.POST.get('category', '')
+        project.hero_image_url = request.POST.get('hero_image_url', '')
+        project.short_description = request.POST.get('short_description', '')
+        project.full_description = request.POST.get('full_description', '')
+        project.specs_data = request.POST.get('specs_data', '')
+        project.gallery_images = request.POST.get('gallery_images', '')
+        related_service_id = request.POST.get('related_service', '')
+        project.related_service_id = related_service_id if related_service_id else None
+        project.featured = request.POST.get('featured') == 'on'
+        project.order = int(request.POST.get('order', 0))
+        project.save()
+        return redirect('dashboard_projects_list')
+    
+    services = Service.objects.all().order_by('title')
+    return render(request, 'dashboard/projects/edit.html', {'project': project, 'services': services})
+
+
+@login_required
+@admin_required
+@require_POST
+def dashboard_project_delete(request, pk):
+    """Delete project"""
+    project = get_object_or_404(Project, pk=pk)
+    project.delete()
+    return redirect('dashboard_projects_list')
+
+
 # ==================== METADATA MANAGEMENT ====================
 
 @login_required
@@ -515,6 +610,23 @@ def dashboard_metadata_delete(request, pk):
     return redirect('dashboard_metadata_list')
 
 
+# ==================== INTRO SETTINGS MANAGEMENT ====================
+
+@login_required
+@admin_required
+def dashboard_intro_settings(request):
+    """Edit intro section settings"""
+    intro_settings = IntroSettings.get_settings()
+    
+    if request.method == 'POST':
+        intro_settings.intro_image_url = request.POST.get('intro_image_url', '')
+        intro_settings.use_svg_fallback = request.POST.get('use_svg_fallback') == 'on'
+        intro_settings.save()
+        return redirect('dashboard_intro_settings')
+    
+    return render(request, 'dashboard/intro_settings/edit.html', {'intro_settings': intro_settings})
+
+
 # ==================== GALLERY MANAGEMENT ====================
 
 @login_required
@@ -559,20 +671,16 @@ def gallery_api_upload(request):
         
         for file in files:
             try:
-                # Read file content
+                # Always convert to WebP format before upload
+                # This ensures optimal performance and consistent format
                 file.seek(0)
-                file_bytes = file.read()
+                file_bytes = smart_compress_to_bytes(file)
                 
-                # Auto-compress if file is too large (>9.3MB)
-                if len(file_bytes) > TARGET_BYTES:
-                    file.seek(0)
-                    file_bytes = smart_compress_to_bytes(file)
-                
-                # Generate clean public_id from filename
+                # Generate clean public_id from filename (remove extension since it will be WebP)
                 base_name = file.name.rsplit('.', 1)[0] if '.' in file.name else file.name
                 public_id = slugify(base_name)[:120]
                 
-                # Upload to Cloudinary
+                # Upload to Cloudinary (already in WebP format)
                 result, web_url, thumb_url = upload_to_cloudinary(
                     file_bytes=file_bytes,
                     folder="uploads",
@@ -613,6 +721,37 @@ def gallery_api_upload(request):
             'images': uploaded_images
         })
         
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
+
+
+@login_required
+@blog_author_required
+def gallery_api_list(request):
+    """API endpoint to get all gallery images as JSON"""
+    try:
+        assets = MediaAsset.objects.all().order_by('-created_at')
+        
+        images = []
+        for asset in assets:
+            images.append({
+                'id': asset.id,
+                'title': asset.title,
+                'secure_url': asset.secure_url,
+                'web_url': asset.web_url,
+                'thumb_url': asset.thumb_url,
+                'width': asset.width,
+                'height': asset.height,
+                'format': asset.format,
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'images': images
+        })
     except Exception as e:
         return JsonResponse({
             'success': False,

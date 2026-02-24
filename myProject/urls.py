@@ -63,5 +63,8 @@ urlpatterns = [
     # User management
     path('dashboard/users/', views.dashboard_users_list, name='dashboard_users_list'),
     path('dashboard/users/<int:pk>/edit/', views.dashboard_user_edit, name='dashboard_user_edit'),
+    
+    # Contact form
+    path('contact/submit/', views.contact_form_submit, name='contact_form_submit'),
 ]
 

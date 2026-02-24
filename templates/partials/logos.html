@@ -75,14 +75,14 @@
 
 .trust-logos{
   display: flex;
-  gap: 60px;
+  gap: 0;
   align-items: center;
   flex-shrink: 0;
 }
 
 .trust-logos-duplicate{
   display: flex;
-  gap: 60px;
+  gap: 0;
   align-items: center;
   flex-shrink: 0;
 }
@@ -92,14 +92,18 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 0;
+  min-width: 200px;
+  width: 200px;
+  padding: 0 30px;
   transition: transform 0.3s ease;
+  box-sizing: border-box;
 }
 
 .trust-logo img{
   max-height: var(--trust-logo-maxh);
   height: var(--trust-logo-maxh);
   width: auto;
+  max-width: 100%;
   object-fit: contain;
   opacity: 1;
   filter: brightness(1) saturate(1.1);
@@ -130,9 +134,10 @@
   :root {
     --trust-logo-maxh: 100px;
   }
-  .trust-logos,
-  .trust-logos-duplicate {
-    gap: 60px;
+  .trust-logo {
+    min-width: 160px;
+    width: 160px;
+    padding: 0 24px;
   }
   .trust-logos-wrapper {
     padding: 30px 0;
@@ -149,9 +154,10 @@
   :root {
     --trust-logo-maxh: 80px;
   }
-  .trust-logos,
-  .trust-logos-duplicate {
-    gap: 50px;
+  .trust-logo {
+    min-width: 140px;
+    width: 140px;
+    padding: 0 20px;
   }
   .trust-logos-wrapper {
     padding: 20px 0;

@@ -1,0 +1,109 @@
+<!-- ═══════════════ FLOATING WHATSAPP BUTTON ═══════════════ -->
+<a
+  href="https://wa.me/971502009863?text=Hi%20Gold%20Leaf%20Scapes%2C%20I%27d%20like%20to%20discuss%20a%20project."
+  class="whatsapp-fab"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Chat on WhatsApp"
+>
+  <span class="whatsapp-fab-ring"></span>
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<style>
+  .whatsapp-fab {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 20%, #ffffff 0%, #25D366 45%, #0fa955 100%);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+    z-index: 9500;
+    text-decoration: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    overflow: visible;
+    animation: whatsapp-fab-in 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.2s both,
+               whatsapp-fab-pulse 1.8s ease-in-out 1s infinite;
+  }
+
+  .whatsapp-fab i {
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  }
+
+  /* Glowing pulse ring */
+  .whatsapp-fab-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 999px;
+    border: 2px solid rgba(37, 211, 102, 0.45);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
+    z-index: 1;
+    animation: whatsapp-ring-pulse 2.2s ease-out 0.4s infinite;
+  }
+
+  .whatsapp-fab:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+    background: radial-gradient(circle at 20% 0%, #ffffff 0%, #1ebe5d 45%, #0b8b46 100%);
+  }
+
+  .whatsapp-fab:hover .whatsapp-fab-ring {
+    animation-duration: 1.6s;
+  }
+
+  @keyframes whatsapp-fab-in {
+    0% {
+      opacity: 0;
+      transform: translateY(20px) scale(0.6);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(-2px) scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes whatsapp-fab-pulse {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-2px) scale(1.03); }
+  }
+
+  @keyframes whatsapp-ring-pulse {
+    0% {
+      transform: scale(0.9);
+      opacity: 0.7;
+      box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6);
+    }
+    70% {
+      transform: scale(1.25);
+      opacity: 0;
+      box-shadow: 0 0 0 14px rgba(37, 211, 102, 0);
+    }
+    100% {
+      transform: scale(1.25);
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .whatsapp-fab {
+      right: 16px;
+      bottom: 16px;
+      width: 54px;
+      height: 54px;
+      font-size: 1.6rem;
+    }
+  }
+</style>

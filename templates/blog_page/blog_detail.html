@@ -700,7 +700,7 @@
 {% include 'partials/footer.html' %}
 
 <!-- STICKY CTA -->
-<a href="#" class="sticky-cta" id="stickyCta"><i class="fas fa-calendar-check"></i> Free Consultation</a>
+<a href="#" onclick="event.preventDefault(); openContactModal('consultation'); return false;" class="sticky-cta" id="stickyCta"><i class="fas fa-calendar-check"></i> Free Consultation</a>
 
 <script>
   // Progress bar

@@ -959,7 +959,7 @@
 
 <!-- ════ STICKY CTA ════ -->
 <div class="sticky-cta" id="stickyCta">
-  <a href="#"><i class="fas fa-calendar-check"></i> Free Consultation</a>
+  <a href="#" onclick="event.preventDefault(); openContactModal('consultation'); return false;"><i class="fas fa-calendar-check"></i> Free Consultation</a>
 </div>
 
 {% include 'partials/nav.html' %}
@@ -1051,6 +1051,9 @@
     if (!open) { a.classList.add('open'); btn.classList.add('open'); }
   }
 </script>
+
+{% include 'partials/whatsapp_button.html' %}
+{% include 'partials/contact_modal.html' %}
 </body>
 </html>
 

@@ -9,7 +9,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.text import slugify
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.conf import settings
 import json
+import os
+import re
+import resend
 
 from .models import (
     UserProfile, Service, Insight, Hero, Metadata, 
@@ -797,3 +801,121 @@ def dashboard_user_edit(request, pk):
         return redirect('dashboard_users_list')
     
     return render(request, 'dashboard/users/edit.html', {'user': user, 'profile': profile})
+
+
+# ==================== CONTACT FORM ====================
+
+@require_POST
+def contact_form_submit(request):
+    """Handle contact form submission with Resend email"""
+    try:
+        # Get form data
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        message = request.POST.get('message', '').strip()
+        form_type = request.POST.get('form_type', 'consultation')  # 'consultation' or 'quote'
+        
+        # Honeypot field (bot protection) - should be empty
+        honeypot = request.POST.get('website', '').strip()
+        if honeypot:
+            # Bot detected
+            return JsonResponse({'success': False, 'error': 'Invalid submission'}, status=400)
+        
+        # Checkbox validation (bot protection)
+        terms_accepted = request.POST.get('terms_accepted', '')
+        if not terms_accepted:
+            return JsonResponse({'success': False, 'error': 'Please accept the terms and conditions'}, status=400)
+        
+        # Validate required fields
+        if not name or not email or not message:
+            return JsonResponse({'success': False, 'error': 'Please fill in all required fields'}, status=400)
+        
+        # Validate email format
+        if '@' not in email or '.' not in email.split('@')[1]:
+            return JsonResponse({'success': False, 'error': 'Please enter a valid email address'}, status=400)
+        
+        # Send email using Resend
+        if not settings.RESEND_API_KEY:
+            return JsonResponse({'success': False, 'error': 'Email service not configured'}, status=500)
+        
+        # Get email settings with fallbacks
+        from_email = settings.RESEND_FROM_EMAIL or os.environ.get('DEFAULT_FROM_EMAIL', '')
+        to_email = settings.RESEND_TO_EMAIL or os.environ.get('DEFAULT_FROM_EMAIL', '')
+        reply_to_email = os.environ.get('RESEND_REPLY_TO', '')
+        
+        # Validate email addresses
+        if not from_email or not to_email:
+            return JsonResponse({'success': False, 'error': 'Email service not properly configured'}, status=500)
+        
+        # Parse FROM email if it's in "Name <email>" format
+        # Resend accepts both formats, but let's extract just the email if needed
+        from_match = re.search(r'<([^>]+)>', from_email)
+        if from_match:
+            from_email = from_match.group(1)
+        else:
+            # If no angle brackets, use as is (should be just email)
+            from_email = from_email.strip()
+        
+        resend.api_key = settings.RESEND_API_KEY
+        
+        # Determine subject based on form type
+        if form_type == 'quote':
+            subject = f"New Quote Request from {name}"
+        else:
+            subject = f"New Consultation Request from {name}"
+        
+        # Email body
+        email_body = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <h2 style="color: #B8922A;">New {form_type.title()} Request</h2>
+            <p><strong>Name:</strong> {name}</p>
+            <p><strong>Email:</strong> {email}</p>
+            <p><strong>Phone:</strong> {phone if phone else 'Not provided'}</p>
+            <p><strong>Message:</strong></p>
+            <p style="background: #f5f5f5; padding: 15px; border-left: 3px solid #B8922A; margin: 10px 0;">
+                {message.replace(chr(10), '<br>')}
+            </p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+            <p style="font-size: 12px; color: #666;">
+                This email was sent from the Gold Leaf Scapes website contact form.
+            </p>
+        </body>
+        </html>
+        """
+        
+        # Build email params
+        params = {
+            "from": str(from_email),
+            "to": [str(to_email)],
+            "subject": subject,
+            "html": email_body,
+        }
+        
+        # Add reply_to if configured, otherwise use sender's email
+        if reply_to_email:
+            params["reply_to"] = str(reply_to_email)
+        else:
+            params["reply_to"] = email
+        
+        try:
+            email_response = resend.Emails.send(params)
+            # Check if email was sent successfully
+            if email_response and hasattr(email_response, 'id'):
+                return JsonResponse({
+                    'success': True, 
+                    'message': 'Thank you! We will get back to you soon.'
+                })
+            else:
+                return JsonResponse({'success': False, 'error': 'Failed to send email'}, status=500)
+        except Exception as email_error:
+            if settings.DEBUG:
+                print(f"Resend API error: {str(email_error)}")
+            return JsonResponse({'success': False, 'error': 'Failed to send email. Please try again later.'}, status=500)
+            
+    except Exception as e:
+        # Log error in production
+        if settings.DEBUG:
+            print(f"Contact form error: {str(e)}")
+        return JsonResponse({'success': False, 'error': 'An error occurred. Please try again later.'}, status=500)

@@ -1,0 +1,364 @@
+<!-- ═══════════════ CONTACT FORM MODAL ═══════════════ -->
+<div id="contactModal" class="contact-modal" style="display: none;">
+  <div class="contact-modal-overlay"></div>
+  <div class="contact-modal-content">
+    <button class="contact-modal-close" id="contactModalClose">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <div class="contact-modal-header">
+      <h2 id="contactModalTitle">Schedule Free Consultation</h2>
+      <p>Fill out the form below and we'll get back to you within 24 hours.</p>
+    </div>
+    
+    <form id="contactForm" class="contact-form">
+      {% csrf_token %}
+      <input type="hidden" name="form_type" id="formType" value="consultation">
+      
+      <!-- Honeypot field (hidden from users, bots will fill it) -->
+      <input type="text" name="website" id="website" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="off">
+      
+      <div class="form-group">
+        <label for="contactName">Full Name <span style="color: var(--gold);">*</span></label>
+        <input type="text" id="contactName" name="name" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="contactEmail">Email Address <span style="color: var(--gold);">*</span></label>
+        <input type="email" id="contactEmail" name="email" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="contactPhone">Phone Number</label>
+        <input type="tel" id="contactPhone" name="phone">
+      </div>
+      
+      <div class="form-group">
+        <label for="contactMessage">Message <span style="color: var(--gold);">*</span></label>
+        <textarea id="contactMessage" name="message" rows="5" required></textarea>
+      </div>
+      
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="termsAccepted" name="terms_accepted" required>
+          <span>I agree to the <a href="#" style="color: var(--gold);">terms and conditions</a> and privacy policy</span>
+        </label>
+      </div>
+      
+      <div id="contactFormError" class="form-error" style="display: none;"></div>
+      <div id="contactFormSuccess" class="form-success" style="display: none;"></div>
+      
+      <button type="submit" class="btn-submit" id="contactSubmitBtn">
+        <span class="btn-text">Submit Request</span>
+        <span class="btn-loading" style="display: none;">
+          <i class="fas fa-spinner fa-spin"></i> Sending...
+        </span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<style>
+  .contact-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .contact-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(13, 13, 11, 0.85);
+    backdrop-filter: blur(4px);
+  }
+  
+  .contact-modal-content {
+    position: relative;
+    background: var(--ivory);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 48px 40px;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    z-index: 10001;
+  }
+  
+  .contact-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s, color 0.2s;
+  }
+  
+  .contact-modal-close:hover {
+    background: var(--linen);
+    color: var(--text-dark);
+  }
+  
+  .contact-modal-header {
+    margin-bottom: 32px;
+  }
+  
+  .contact-modal-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--forest);
+    margin-bottom: 8px;
+  }
+  
+  .contact-modal-header p {
+    font-size: 0.95rem;
+    color: var(--text-mid);
+    line-height: 1.6;
+  }
+  
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .form-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    letter-spacing: 0.05em;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    padding: 14px 16px;
+    border: 1px solid var(--linen);
+    background: var(--warm-white);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    border-radius: 4px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(184, 146, 42, 0.1);
+  }
+  
+  .checkbox-group {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  
+  .checkbox-label input[type="checkbox"] {
+    margin-top: 3px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  
+  .btn-submit {
+    background: var(--gold);
+    color: var(--forest);
+    border: none;
+    padding: 16px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s, transform 0.2s;
+    margin-top: 8px;
+  }
+  
+  .btn-submit:hover:not(:disabled) {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+  }
+  
+  .btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .form-error {
+    background: #fee;
+    color: #c33;
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    border-left: 3px solid #c33;
+  }
+  
+  .form-success {
+    background: #efe;
+    color: #3c3;
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    border-left: 3px solid #3c3;
+  }
+  
+  @media (max-width: 640px) {
+    .contact-modal-content {
+      padding: 36px 24px;
+      width: 95%;
+    }
+    
+    .contact-modal-header h2 {
+      font-size: 1.6rem;
+    }
+  }
+</style>
+
+<script>
+  // Contact Modal JavaScript
+  (function() {
+    const modal = document.getElementById('contactModal');
+    const closeBtn = document.getElementById('contactModalClose');
+    const form = document.getElementById('contactForm');
+    const overlay = document.querySelector('.contact-modal-overlay');
+    
+    // Open modal function
+    window.openContactModal = function(formType = 'consultation') {
+      const title = document.getElementById('contactModalTitle');
+      const formTypeInput = document.getElementById('formType');
+      
+      if (formType === 'quote') {
+        title.textContent = 'Get a Quote';
+        formTypeInput.value = 'quote';
+      } else {
+        title.textContent = 'Schedule Free Consultation';
+        formTypeInput.value = 'consultation';
+      }
+      
+      // Reset form
+      form.reset();
+      document.getElementById('contactFormError').style.display = 'none';
+      document.getElementById('contactFormSuccess').style.display = 'none';
+      
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
+    
+    // Close modal function
+    function closeModal() {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    
+    // Close button
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeModal);
+    }
+    
+    // Close on overlay click
+    if (overlay) {
+      overlay.addEventListener('click', closeModal);
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.style.display === 'flex') {
+        closeModal();
+      }
+    });
+    
+    // Form submission
+    if (form) {
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('contactSubmitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoading = submitBtn.querySelector('.btn-loading');
+        const errorDiv = document.getElementById('contactFormError');
+        const successDiv = document.getElementById('contactFormSuccess');
+        
+        // Hide previous messages
+        errorDiv.style.display = 'none';
+        successDiv.style.display = 'none';
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        btnText.style.display = 'none';
+        btnLoading.style.display = 'inline';
+        
+        try {
+          const formData = new FormData(form);
+          
+          const response = await fetch('{% url "contact_form_submit" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+            }
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            successDiv.textContent = data.message;
+            successDiv.style.display = 'block';
+            form.reset();
+            
+            // Close modal after 2 seconds
+            setTimeout(() => {
+              closeModal();
+            }, 2000);
+          } else {
+            errorDiv.textContent = data.error || 'An error occurred. Please try again.';
+            errorDiv.style.display = 'block';
+          }
+        } catch (error) {
+          errorDiv.textContent = 'Network error. Please check your connection and try again.';
+          errorDiv.style.display = 'block';
+        } finally {
+          // Reset button state
+          submitBtn.disabled = false;
+          btnText.style.display = 'inline';
+          btnLoading.style.display = 'none';
+        }
+      });
+    }
+  })();
+</script>
+

@@ -136,6 +136,11 @@
       font-weight: 700;
     }
 
+    .nav-links {
+      display: flex;
+      align-items: center;
+    }
+
     .nav-links a {
       font-family: 'Jost', sans-serif;
       font-weight: 300;
@@ -409,6 +414,24 @@
       grid-template-columns: 1fr 1fr;
       gap: 80px;
       align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #intro::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url('https://res.cloudinary.com/dzdi9ndf9/image/upload/v1772060381/Untitled_design_5_fnhkc8.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.04;
+      z-index: 0;
+      pointer-events: none;
+    }
+    #intro > * {
+      position: relative;
+      z-index: 1;
     }
 
     .intro-visual {
@@ -1470,7 +1493,7 @@
     .footer-brand p {
       font-size: 1rem;
       font-weight: 300;
-      line-height: 1.75;
+      line-height: 1.5;
       color: var(--cream);
       margin-top: 20px;
       opacity: 0.9;
@@ -1744,6 +1767,10 @@
       .hero-stats { display: none; }
       
       #intro { grid-template-columns: 1fr; gap: 40px; }
+      #intro::before {
+        background-position: center center;
+        background-size: cover;
+      }
       .intro-visual { height: 300px; }
       .intro-body { padding: 0; }
       .intro-body p { font-size: 1rem; }
@@ -1974,6 +2001,10 @@
       .btn-primary, .btn-ghost { font-size: 0.85rem; padding: 14px 28px; }
       
       #intro { padding: 60px 20px; gap: 32px; }
+      #intro::before {
+        background-position: center center;
+        background-size: cover;
+      }
       .intro-visual { height: 240px; }
       .intro-body p { font-size: 0.95rem; line-height: 1.7; }
       .intro-features { gap: 12px; margin-top: 24px; }
@@ -2230,7 +2261,7 @@
     }
   </script>
 </head>
-<body{% if request.resolver_match.url_name == 'projects' %} class="light-nav"{% endif %}>
+<body{% if request.resolver_match.url_name == 'projects' or request.resolver_match.url_name == 'project_detail' %} class="light-nav"{% endif %}>
   {% include 'partials/nav.html' %}
   
   {% block content %}{% endblock %}
@@ -2283,13 +2314,16 @@
     const nav = document.getElementById('nav');
 
     function syncNav() {
+      if (!nav) return;
       const scrolled = window.scrollY > 60;
       nav.classList.toggle('scrolled', scrolled);
       document.body.classList.toggle('nav-scrolled', scrolled);
     }
 
-    window.addEventListener('scroll', syncNav, { passive: true });
-    window.addEventListener('load', syncNav);
+    if (nav) {
+      window.addEventListener('scroll', syncNav, { passive: true });
+      window.addEventListener('load', syncNav);
+    }
 
     // Reveal on scroll
     const reveals = document.querySelectorAll('.reveal');

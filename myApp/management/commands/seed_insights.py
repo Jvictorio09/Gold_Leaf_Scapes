@@ -200,7 +200,7 @@ class Command(BaseCommand):
                 'slug': 'landscaping-mistakes-dubai',
                 'excerpt': 'After 13 years and over 400 completed projects, our lead designers share the most common — and costly — landscaping missteps they encounter on new client sites.',
                 'content': '''<p class="lead" id="section-intro">
-      Over thirteen years of designing and installing landscapes across Dubai, Abu Dhabi, and Sharjah, we've seen the same mistakes repeated time and again. These aren't minor oversights — they're fundamental errors in approach that can cost homeowners tens of thousands of dirhams in premature replacements, excessive maintenance, and complete redesigns.
+      Over thirteen years of designing and installing landscapes across Dubai, we've seen the same mistakes repeated time and again. These aren't minor oversights — they're fundamental errors in approach that can cost homeowners tens of thousands of dirhams in premature replacements, excessive maintenance, and complete redesigns.
     </p>
 
     <h2 id="section-mistake1">Mistake #1: Choosing Plants Based on Appearance Alone</h2>

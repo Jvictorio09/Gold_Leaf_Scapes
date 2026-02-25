@@ -162,12 +162,6 @@ cloudinary.config(
 LOGIN_URL = '/dashboard/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 
-# Resend Email Configuration
-# These map to your .env variables, e.g.:
-# RESEND_API_KEY=...
-# RESEND_FROM="HAMMER <noreply@hammer-services.com>"
-# RESEND_REPLY_TO=info@hammer-services.com
-# DEFAULT_FROM_EMAIL=info@hammer-services.com
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY')
 
 # Prefer RESEND_FROM (\"Name <email>\") but fall back to DEFAULT_FROM_EMAIL

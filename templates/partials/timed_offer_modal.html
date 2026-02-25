@@ -42,7 +42,7 @@
             {% csrf_token %}
             <input type="hidden" name="form_type" value="consultation">
             <!-- Honeypot -->
-            <input type="text" name="website" style="position:absolute;left:-9999px;opacity:0;pointer-events:none;" tabindex="-1" autocomplete="off">
+            <input type="text" name="website" style="position:absolute;left:-9999px;width:0;height:0;opacity:0;pointer-events:none;visibility:hidden;" tabindex="-1" autocomplete="off" aria-hidden="true">
 
             <div class="value-field-group">
               <label for="voName">Full Name <span>*</span></label>
@@ -616,6 +616,12 @@
         voBtnLoading.style.display = 'inline-flex';
 
         try {
+          // Clear honeypot field before submission (in case browser autofill filled it)
+          const honeypotField = form.querySelector('input[name="website"]');
+          if (honeypotField) {
+            honeypotField.value = '';
+          }
+          
           const formData = new FormData(form);
           const csrfToken = formData.get('csrfmiddlewaretoken');
 

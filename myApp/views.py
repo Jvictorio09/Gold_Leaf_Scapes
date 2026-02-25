@@ -808,6 +808,16 @@ def dashboard_user_edit(request, pk):
 @require_POST
 def contact_form_submit(request):
     """Handle contact form submission with Resend email"""
+    import traceback
+    import sys
+    
+    # Force print to console immediately (flush ensures it shows up)
+    print("=" * 80, file=sys.stderr, flush=True)
+    print("CONTACT FORM SUBMISSION RECEIVED", file=sys.stderr, flush=True)
+    print(f"Method: {request.method}", file=sys.stderr, flush=True)
+    print(f"POST data keys: {list(request.POST.keys())}", file=sys.stderr, flush=True)
+    print("=" * 80, file=sys.stderr, flush=True)
+    
     try:
         # Get form data
         name = request.POST.get('name', '').strip()
@@ -817,9 +827,12 @@ def contact_form_submit(request):
         form_type = request.POST.get('form_type', 'consultation')  # 'consultation' or 'quote'
         
         # Honeypot field (bot protection) - should be empty
+        # Only reject if it has meaningful content (not just whitespace or autofill artifacts)
         honeypot = request.POST.get('website', '').strip()
-        if honeypot:
+        if honeypot and len(honeypot) > 2:  # Only reject if it has actual content (more than 2 chars)
             # Bot detected
+            if settings.DEBUG:
+                print(f"Honeypot field filled: '{honeypot}'")
             return JsonResponse({'success': False, 'error': 'Invalid submission'}, status=400)
         
         # Checkbox validation (bot protection)
@@ -836,16 +849,21 @@ def contact_form_submit(request):
             return JsonResponse({'success': False, 'error': 'Please enter a valid email address'}, status=400)
         
         # Send email using Resend
-        if not settings.RESEND_API_KEY:
+        resend_api_key = getattr(settings, 'RESEND_API_KEY', None)
+        if not resend_api_key:
+            if settings.DEBUG:
+                print("Resend API key not found in settings")
             return JsonResponse({'success': False, 'error': 'Email service not configured'}, status=500)
         
         # Get email settings with fallbacks
-        from_email = settings.RESEND_FROM_EMAIL or os.environ.get('DEFAULT_FROM_EMAIL', '')
-        to_email = settings.RESEND_TO_EMAIL or os.environ.get('DEFAULT_FROM_EMAIL', '')
+        from_email = getattr(settings, 'RESEND_FROM_EMAIL', None) or os.environ.get('DEFAULT_FROM_EMAIL', '')
+        to_email = getattr(settings, 'RESEND_TO_EMAIL', None) or os.environ.get('DEFAULT_FROM_EMAIL', '')
         reply_to_email = os.environ.get('RESEND_REPLY_TO', '')
         
         # Validate email addresses
         if not from_email or not to_email:
+            if settings.DEBUG:
+                print(f"Email configuration missing - from_email: {bool(from_email)}, to_email: {bool(to_email)}")
             return JsonResponse({'success': False, 'error': 'Email service not properly configured'}, status=500)
         
         # Parse FROM email if it's in "Name <email>" format
@@ -857,7 +875,18 @@ def contact_form_submit(request):
             # If no angle brackets, use as is (should be just email)
             from_email = from_email.strip()
         
-        resend.api_key = settings.RESEND_API_KEY
+        # Validate extracted email
+        if not from_email or '@' not in from_email:
+            if settings.DEBUG:
+                print(f"Invalid from_email after parsing: {from_email}")
+            return JsonResponse({'success': False, 'error': 'Invalid email configuration'}, status=500)
+        
+        try:
+            resend.api_key = resend_api_key
+        except Exception as e:
+            if settings.DEBUG:
+                print(f"Error setting Resend API key: {str(e)}")
+            return JsonResponse({'success': False, 'error': 'Email service configuration error'}, status=500)
         
         # Determine subject based on form type
         if form_type == 'quote':
@@ -900,22 +929,148 @@ def contact_form_submit(request):
             params["reply_to"] = email
         
         try:
+            # Send email to business
             email_response = resend.Emails.send(params)
+            
             # Check if email was sent successfully
-            if email_response and hasattr(email_response, 'id'):
-                return JsonResponse({
-                    'success': True, 
-                    'message': 'Thank you! We will get back to you soon.'
-                })
-            else:
+            # Resend returns a dict with 'id' key, not an object with 'id' attribute
+            email_id = None
+            if isinstance(email_response, dict):
+                email_id = email_response.get('id')
+            elif hasattr(email_response, 'id'):
+                email_id = email_response.id
+            
+            if not email_id:
+                if settings.DEBUG:
+                    print(f"Resend API returned unexpected response: {email_response}")
+                    print(f"Response type: {type(email_response)}")
                 return JsonResponse({'success': False, 'error': 'Failed to send email'}, status=500)
-        except Exception as email_error:
+            
             if settings.DEBUG:
-                print(f"Resend API error: {str(email_error)}")
-            return JsonResponse({'success': False, 'error': 'Failed to send email. Please try again later.'}, status=500)
+                print(f"Business email sent successfully with ID: {email_id}")
+            
+            # Send confirmation email to client
+            try:
+                client_subject = "Thank you for contacting Gold Leaf Scapes"
+                client_email_body = f"""
+                <html>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;">
+                    <div style="background: linear-gradient(135deg, #0f290d 0%, #1e3828 100%); padding: 40px 20px; text-align: center;">
+                        <h1 style="color: #C9A84C; font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; margin: 0; font-weight: 300;">Gold Leaf Scapes</h1>
+                    </div>
+                    <div style="padding: 40px 20px; background: #ffffff;">
+                        <h2 style="color: #1C2414; font-size: 1.8rem; margin-bottom: 20px;">Thank You, {name}!</h2>
+                        <p style="color: #4A5640; font-size: 1rem; line-height: 1.8;">
+                            We've received your {form_type} request and our team will get back to you within 24 hours.
+                        </p>
+                        <div style="background: #F7F3EC; padding: 20px; border-left: 3px solid #C9A84C; margin: 30px 0;">
+                            <p style="margin: 0; color: #1C2414; font-size: 0.95rem;"><strong>Your Request Summary:</strong></p>
+                            <p style="margin: 10px 0 0 0; color: #4A5640; font-size: 0.9rem;">{message[:200]}{'...' if len(message) > 200 else ''}</p>
+                        </div>
+                        <p style="color: #4A5640; font-size: 0.95rem; line-height: 1.8; margin-top: 30px;">
+                            In the meantime, feel free to reach us directly:
+                        </p>
+                        <div style="margin: 25px 0;">
+                            <p style="margin: 8px 0; color: #1C2414;">
+                                <strong style="color: #C9A84C;">📞 Phone:</strong> <a href="tel:+971502009863" style="color: #4A5640; text-decoration: none;">+971 50 200 9863</a>
+                            </p>
+                            <p style="margin: 8px 0; color: #1C2414;">
+                                <strong style="color: #C9A84C;">✉️ Email:</strong> <a href="mailto:info@goldleafscapes.com" style="color: #4A5640; text-decoration: none;">info@goldleafscapes.com</a>
+                            </p>
+                            <p style="margin: 8px 0; color: #1C2414;">
+                                <strong style="color: #C9A84C;">📍 Location:</strong> Dubai, UAE
+                            </p>
+                        </div>
+                        <p style="color: #8A9680; font-size: 0.85rem; margin-top: 40px; padding-top: 20px; border-top: 1px solid #E8E0CC;">
+                            Best regards,<br>
+                            <strong style="color: #1C2414;">The Gold Leaf Scapes Team</strong>
+                        </p>
+                    </div>
+                    <div style="background: #0f290d; padding: 20px; text-align: center;">
+                        <p style="color: #C9A84C; font-size: 0.75rem; margin: 0;">
+                            © 2026 Gold Leaf Scapes LLC. All Rights Reserved.
+                        </p>
+                    </div>
+                </body>
+                </html>
+                """
+                
+                client_params = {
+                    "from": str(from_email),
+                    "to": [str(email)],
+                    "subject": client_subject,
+                    "html": client_email_body,
+                    "reply_to": str(to_email) if to_email else None,
+                }
+                
+                # Remove reply_to if None
+                if not client_params["reply_to"]:
+                    del client_params["reply_to"]
+                
+                client_email_response = resend.Emails.send(client_params)
+                
+                # Check client email response (dict with 'id' key or object with 'id' attribute)
+                client_email_id = None
+                if isinstance(client_email_response, dict):
+                    client_email_id = client_email_response.get('id')
+                elif hasattr(client_email_response, 'id'):
+                    client_email_id = client_email_response.id
+                
+                if settings.DEBUG:
+                    if client_email_id:
+                        print(f"Confirmation email sent to client: {email} (ID: {client_email_id})")
+                    else:
+                        print(f"Warning: Failed to send confirmation email to client: {email}")
+                        print(f"Client email response: {client_email_response}")
+                        
+            except Exception as client_email_error:
+                # Don't fail the whole request if client email fails
+                if settings.DEBUG:
+                    print(f"Warning: Failed to send confirmation email to client: {str(client_email_error)}")
+            
+            return JsonResponse({
+                'success': True, 
+                'message': 'Thank you! We will get back to you soon.'
+            })
+            
+        except Exception as email_error:
+            error_msg = str(email_error)
+            if settings.DEBUG:
+                print(f"Resend API error: {error_msg}")
+                print(f"Email params: from={params.get('from')}, to={params.get('to')}")
+            # Return more specific error message in debug mode
+            if settings.DEBUG:
+                return JsonResponse({
+                    'success': False, 
+                    'error': f'Failed to send email: {error_msg}'
+                }, status=500)
+            else:
+                return JsonResponse({
+                    'success': False, 
+                    'error': 'Failed to send email. Please try again later.'
+                }, status=500)
             
     except Exception as e:
-        # Log error in production
+        # Log full error traceback
+        error_traceback = traceback.format_exc()
+        print("=" * 80)
+        print("CONTACT FORM ERROR:")
+        print(error_traceback)
+        print("=" * 80)
+        
+        # Also log to Django's logging if available
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Contact form submission error: {str(e)}", exc_info=True)
+        
         if settings.DEBUG:
-            print(f"Contact form error: {str(e)}")
-        return JsonResponse({'success': False, 'error': 'An error occurred. Please try again later.'}, status=500)
+            return JsonResponse({
+                'success': False, 
+                'error': f'An error occurred: {str(e)}',
+                'traceback': error_traceback if settings.DEBUG else None
+            }, status=500)
+        else:
+            return JsonResponse({
+                'success': False, 
+                'error': 'An error occurred. Please try again later.'
+            }, status=500)

@@ -16,7 +16,7 @@
       <input type="hidden" name="form_type" id="formType" value="consultation">
       
       <!-- Honeypot field (hidden from users, bots will fill it) -->
-      <input type="text" name="website" id="website" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="off">
+      <input type="text" name="website" id="website" style="position: absolute; left: -9999px; width: 0; height: 0; opacity: 0; pointer-events: none; visibility: hidden;" tabindex="-1" autocomplete="off" aria-hidden="true">
       
       <div class="form-group">
         <label for="contactName">Full Name <span style="color: var(--gold);">*</span></label>
@@ -323,17 +323,49 @@
         btnLoading.style.display = 'inline';
         
         try {
+          // Clear honeypot field before submission (in case browser autofill filled it)
+          const honeypotField = document.getElementById('website');
+          if (honeypotField) {
+            honeypotField.value = '';
+          }
+          
           const formData = new FormData(form);
+          
+          // Get CSRF token from cookie or form
+          function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+                }
+              }
+            }
+            return cookieValue;
+          }
+          const csrftoken = formData.get('csrfmiddlewaretoken') || getCookie('csrftoken');
           
           const response = await fetch('{% url "contact_form_submit" %}', {
             method: 'POST',
             body: formData,
             headers: {
-              'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+              'X-CSRFToken': csrftoken
             }
           });
           
-          const data = await response.json();
+          // Check if response is JSON before parsing
+          const contentType = response.headers.get('content-type');
+          let data;
+          if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+          } else {
+            const text = await response.text();
+            console.error('Non-JSON response:', text);
+            throw new Error('Server returned an invalid response');
+          }
           
           if (data.success) {
             successDiv.textContent = data.message;
@@ -345,11 +377,14 @@
               closeModal();
             }, 2000);
           } else {
-            errorDiv.textContent = data.error || 'An error occurred. Please try again.';
+            const errorMsg = data.error || 'An error occurred. Please try again.';
+            errorDiv.textContent = errorMsg;
             errorDiv.style.display = 'block';
+            console.error('Form submission error:', data);
           }
         } catch (error) {
-          errorDiv.textContent = 'Network error. Please check your connection and try again.';
+          console.error('Form submission exception:', error);
+          errorDiv.textContent = `Error: ${error.message || 'Network error. Please check your connection and try again.'}`;
           errorDiv.style.display = 'block';
         } finally {
           // Reset button state

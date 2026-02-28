@@ -31,9 +31,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-xp(#0mb@kw=5n9_*8i@lt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'goldleafscapes-production.up.railway.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'goldleafscapes-production.up.railway.app', 'goldleafscapes.com', 'www.goldleafscapes.com']
 
-CSRF_TRUSTED_ORIGINS = ['https://goldleafscapes-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://goldleafscapes-production.up.railway.app', 'https://goldleafscapes.com', 'https://www.goldleafscapes.com']
 
 
 # Application definition

@@ -7,6 +7,7 @@ urlpatterns = [
     
     # Public routes
     path('', views.home, name='home'),
+    path('ar/', views.home_ar, name='home_ar'),
     path('services/', views.services, name='services'),
     path('services/<slug:slug>/', views.service_detail, name='service_detail'),
     path('projects/', views.projects, name='projects'),

@@ -50,6 +50,9 @@ def home(request):
     }
     return render(request, 'new_templates/index.html', context)
 
+def home_ar(request):
+    return render(request, 'new_templates/index_ar.html')
+
 def services(request):
     # Get hero for services page
     hero = Hero.objects.filter(page='services', active=True).order_by('order').first()

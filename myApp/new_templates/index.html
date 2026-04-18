@@ -183,6 +183,28 @@ nav.scrolled{padding:0.9rem 4vw;background:rgba(7,8,18,0.92)}
   transition:color 0.25s;
   position:relative;
 }
+.nav-lang{
+  display:inline-flex;
+  align-items:center;
+  gap:0.35rem;
+  padding:0.2rem;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,255,255,0.03);
+}
+.lang-link{
+  font-size:0.62rem !important;
+  letter-spacing:0.18em !important;
+  text-transform:uppercase;
+  color:var(--dim) !important;
+  padding:0.35rem 0.6rem;
+  border-radius:999px;
+  transition:background 0.25s,color 0.25s;
+}
+.lang-link.active{
+  color:var(--white) !important;
+  background:linear-gradient(135deg, var(--blue), var(--purple));
+}
 .nav-links a:not(.nav-cta)::before{
   content:'';
   display:inline-block;
@@ -2508,7 +2530,7 @@ footer{
   .c-left{border-right:none;border-bottom:1px solid var(--line)}
 }
 @media(max-width:768px){
-  .nav-links a:not(.nav-cta){display:none}
+  .nav-links .nav-main-link{display:none}
   section{padding:5rem 5vw}
   #authority,#system,#services,#cases,#process,#testimonials,#market,#different,#qualifier,#faq,#final-cta,#contact{padding:6rem 5vw}
   .hero{padding:7rem 0 3rem}
@@ -2559,10 +2581,14 @@ footer{
     Gold Leaf <em>Scapes</em>
   </a>
   <div class="nav-links">
-    <a href="#system">System</a>
-    <a href="#services">Services</a>
-    <a href="#cases">Work</a>
-    <a href="#process">Process</a>
+    <a href="#system" class="nav-main-link">System</a>
+    <a href="#services" class="nav-main-link">Services</a>
+    <a href="#cases" class="nav-main-link">Work</a>
+    <a href="#process" class="nav-main-link">Process</a>
+    <div class="nav-lang" aria-label="Language switcher">
+      <a href="/" class="lang-link active" aria-current="page">EN</a>
+      <a href="/ar/" class="lang-link">AR</a>
+    </div>
     <a href="#contact" class="nav-cta">Talk to Us</a>
   </div>
 </nav>

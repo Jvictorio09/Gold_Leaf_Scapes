@@ -48,7 +48,7 @@ def home(request):
         'projects': projects,
         'intro_settings': intro_settings,
     }
-    return render(request, 'index.html', context)
+    return render(request, 'new_templates/index.html', context)
 
 def services(request):
     # Get hero for services page
